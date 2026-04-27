@@ -116,7 +116,11 @@ export default function useSideNavLinks({
       });
     }
 
-    if (hasAccessToPrompts) {
+    const promptsConfig = interfaceConfig?.prompts;
+    const promptsEnabled =
+      promptsConfig === undefined ||
+      (typeof promptsConfig === 'boolean' ? promptsConfig : promptsConfig.use !== false);
+    if (hasAccessToPrompts && promptsEnabled) {
       links.push({
         title: 'com_ui_prompts',
         label: '',
@@ -203,6 +207,7 @@ export default function useSideNavLinks({
     hasAccessToMemories,
     hasAccessToReadMemories,
     interfaceConfig.parameters,
+    interfaceConfig?.prompts,
     endpointType,
     hasAccessToBookmarks,
     availableMCPServers,

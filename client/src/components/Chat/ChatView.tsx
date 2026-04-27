@@ -16,6 +16,7 @@ import ChatForm from './Input/ChatForm';
 import Landing from './Landing';
 import Header from './Header';
 import Footer from './Footer';
+import { BrandFloater } from '~/brand';
 import { cn } from '~/utils';
 import store from '~/store';
 
@@ -97,13 +98,20 @@ function ChatView({ index = 0 }: { index?: number }) {
                     className={cn(
                       'w-full',
                       isLandingPage && 'max-w-3xl transition-all duration-200 xl:max-w-4xl',
+                      !isLandingPage && 'relative',
                     )}
                   >
+                    {!isLandingPage && <BrandFloater variant="absolute" />}
                     <ChatForm index={index} />
                     {isLandingPage ? <ConversationStarters /> : <Footer />}
                   </div>
                 </div>
-                {isLandingPage && <Footer />}
+                {isLandingPage && (
+                  <>
+                    <BrandFloater variant="fixed" />
+                    <Footer />
+                  </>
+                )}
               </>
             </div>
           </Presentation>

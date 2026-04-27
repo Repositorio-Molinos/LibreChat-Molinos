@@ -2,6 +2,7 @@ import { ThemeSelector } from '@librechat/client';
 import { TStartupConfig } from 'librechat-data-provider';
 import { ErrorMessage } from '~/components/Auth/ErrorMessage';
 import { TranslationKeys, useLocalize } from '~/hooks';
+import { BrandBackground, BrandAuthLogos } from '~/brand';
 import SocialLoginRender from './SocialLoginRender';
 import { BlinkAnimation } from './BlinkAnimation';
 import { Banner } from '../Banners';
@@ -57,24 +58,28 @@ function AuthLayout({
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-900">
+    <BrandBackground>
       <Banner />
       <BlinkAnimation active={isFetching}>
-        <div className="mt-6 h-10 w-full bg-cover">
-          <img
-            src="assets/logo.svg"
-            className="h-full w-full object-contain"
-            alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'LibreChat' })}
-          />
-        </div>
+        <BrandAuthLogos
+          fallback={
+            <div className="mt-6 h-10 w-full bg-cover">
+              <img
+                src="assets/logo.svg"
+                className="h-full w-full object-contain"
+                alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'LibreChat' })}
+              />
+            </div>
+          }
+        />
       </BlinkAnimation>
       <DisplayError />
-      <div className="absolute bottom-0 left-0 md:m-4">
+      <div className="absolute bottom-0 left-0 z-10 md:m-4">
         <ThemeSelector />
       </div>
 
-      <main className="flex flex-grow items-center justify-center">
-        <div className="w-authPageWidth overflow-hidden bg-white px-6 py-4 dark:bg-gray-900 sm:max-w-md sm:rounded-lg">
+      <main className="relative z-10 flex flex-grow items-center justify-center">
+        <div className="w-authPageWidth overflow-hidden rounded-lg bg-white/90 px-6 py-4 shadow-xl backdrop-blur-sm dark:bg-gray-900/90 sm:max-w-md">
           {!hasStartupConfigError && !isFetching && header && (
             <h1
               className="mb-4 text-center text-3xl font-semibold text-black dark:text-white"
@@ -91,7 +96,7 @@ function AuthLayout({
         </div>
       </main>
       <Footer startupConfig={startupConfig} />
-    </div>
+    </BrandBackground>
   );
 }
 

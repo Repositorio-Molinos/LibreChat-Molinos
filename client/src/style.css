@@ -1,3 +1,6 @@
+@import '@fontsource-variable/nunito/index.css';
+@import '@fontsource-variable/nunito/wght-italic.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

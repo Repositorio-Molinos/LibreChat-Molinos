@@ -744,6 +744,15 @@ export const interfaceSchema = z
         public: z.boolean().optional(),
       })
       .optional(),
+    brand: z
+      .object({
+        logoSidebar: z.string().optional(),
+        logos: z.array(z.string()).optional(),
+        background: z.string().optional(),
+        landingImages: z.array(z.string()).optional(),
+        heroImage: z.string().optional(),
+      })
+      .optional(),
   })
   .default({
     modelSelect: true,

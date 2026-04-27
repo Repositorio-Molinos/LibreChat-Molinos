@@ -97,6 +97,30 @@ function buildSharedPayload() {
     payload.customFooter = process.env.CUSTOM_FOOTER;
   }
 
+  // Optional brand overrides via environment variables. Merged into
+  // payload.interface.brand so the client can read them via
+  // `startupConfig.interface.brand`.
+  const brand = {};
+  if (process.env.BRAND_LOGO_SIDEBAR) {
+    brand.logoSidebar = process.env.BRAND_LOGO_SIDEBAR;
+  }
+  if (process.env.BRAND_LOGOS) {
+    brand.logos = process.env.BRAND_LOGOS.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+  if (process.env.BRAND_BACKGROUND) {
+    brand.background = process.env.BRAND_BACKGROUND;
+  }
+  if (process.env.BRAND_LANDING_IMAGES) {
+    brand.landingImages = process.env.BRAND_LANDING_IMAGES.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+  if (process.env.BRAND_HERO_IMAGE) {
+    brand.heroImage = process.env.BRAND_HERO_IMAGE;
+  }
+  if (Object.keys(brand).length > 0) {
+    payload.interface = payload.interface || {};
+    payload.interface.brand = { ...(payload.interface.brand || {}), ...brand };
+  }
+
   return payload;
 }
 
@@ -133,7 +157,7 @@ router.get('/', async function (req, res) {
 
       const interfaceConfig = baseConfig?.interfaceConfig;
       if (interfaceConfig?.privacyPolicy || interfaceConfig?.termsOfService) {
-        payload.interface = {};
+        payload.interface = payload.interface || {};
         if (interfaceConfig.privacyPolicy) {
           payload.interface.privacyPolicy = interfaceConfig.privacyPolicy;
         }
@@ -157,7 +181,7 @@ router.get('/', async function (req, res) {
     const payload = {
       ...sharedPayload,
       socialLogins: appConfig?.registration?.socialLogins ?? defaultSocialLogins,
-      interface: appConfig?.interfaceConfig,
+      interface: { ...(sharedPayload.interface || {}), ...(appConfig?.interfaceConfig || {}) },
       turnstile: appConfig?.turnstileConfig,
       modelSpecs: appConfig?.modelSpecs,
       balance: balanceConfig,
