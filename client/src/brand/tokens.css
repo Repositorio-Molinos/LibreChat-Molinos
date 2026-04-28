@@ -156,6 +156,16 @@ html.dark [data-brand-zone="sidebar"] {
   border-radius: var(--brand-radius-md);
 }
 
+/* Sidebar: rail icons turn white on hover (default is muted) */
+[data-brand-zone="sidebar"] button:hover svg,
+[data-brand-zone="sidebar"] a:hover svg {
+  color: #ffffff;
+}
+[data-brand-zone="sidebar"] button:hover,
+[data-brand-zone="sidebar"] a:hover {
+  color: #ffffff;
+}
+
 /* Sidebar: search bar adopts brand input styling */
 [data-brand-zone="sidebar"] input[type="text"],
 [data-brand-zone="sidebar"] input[type="search"] {

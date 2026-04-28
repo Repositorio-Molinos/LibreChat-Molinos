@@ -210,9 +210,11 @@ export function createModelBudgetMethods(mongoose: typeof import('mongoose')) {
         const doc = await getOrCreateBudget(userId, bucket, config);
         out.push({
           ...snapshot(doc),
-          // overlay label from config so the consumer can render without a second lookup
+          // overlay label + match patterns from config so the consumer can
+          // filter by active model without a second lookup
           ...(bucket.label ? { label: bucket.label } : {}),
-        } as BudgetSnapshot & { label?: string });
+          match: bucket.match ?? [],
+        } as BudgetSnapshot & { label?: string; match: string[] });
       } catch (err) {
         logger.error(`[modelBudget.getUserBudgets] bucket=${bucket.key}`, err);
       }

@@ -11,8 +11,8 @@ export const brandDefaults = {
   logos: ['/assets/logo-lucchettineta.png', '/assets/logo-molinos-blanco.png'] as
     | string[]
     | undefined,
-  background: '/assets/backgrounds/fondo-estadio.jpg' as string | undefined,
-  landingImages: ['/assets/players/Poses1.webp'] as string[] | undefined,
+  background: undefined as string | undefined,
+  landingImages: undefined as string[] | undefined,
   heroImage: undefined as string | undefined,
 };
 

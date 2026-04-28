@@ -676,4 +676,16 @@ export type TBalanceResponse = {
   refillIntervalUnit?: 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months';
   lastRefill?: Date;
   refillAmount?: number;
+  /** Per-bucket Molinos model budget snapshots (extension over upstream). */
+  modelBudgets?: Array<{
+    bucket: string;
+    label?: string;
+    match?: string[];
+    allocatedCredits: number;
+    spentCredits: number;
+    remainingCredits: number;
+    periodStart: string;
+    periodEnd: string;
+    periodMs: number;
+  }>;
 };

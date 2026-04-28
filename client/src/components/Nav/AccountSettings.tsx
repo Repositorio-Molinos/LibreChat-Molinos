@@ -1,4 +1,5 @@
 import { useState, memo, useRef } from 'react';
+import { useRecoilValue } from 'recoil';
 import * as Menu from '@ariakit/react/menu';
 import { FileText, LogOut } from 'lucide-react';
 import { LinkIcon, GearIcon, DropdownMenuSeparator, Avatar } from '@librechat/client';
@@ -6,6 +7,7 @@ import { MyFilesModal } from '~/components/Chat/Input/Files/MyFilesModal';
 import { useGetStartupConfig, useGetUserBalance } from '~/data-provider';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { useLocalize } from '~/hooks';
+import store from '~/store';
 import Settings from './Settings';
 
 function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
@@ -18,6 +20,12 @@ function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
   const [showSettings, setShowSettings] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
   const accountSettingsButtonRef = useRef<HTMLButtonElement>(null);
+  const activeConversation = useRecoilValue(store.conversationByIndex(0));
+  const activeModel = (activeConversation?.model ?? '').toLowerCase();
+  const activeBudgets = (balanceQuery.data?.modelBudgets ?? []).filter((b) => {
+    if (!activeModel) return false;
+    return (b.match ?? []).some((p) => p && activeModel.includes(p.toLowerCase()));
+  });
 
   return (
     <Menu.MenuProvider>
@@ -49,26 +57,58 @@ function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
       </Menu.MenuButton>
       <Menu.Menu
         portal
-        className="account-settings-popover popover-ui z-[125] w-[305px] rounded-lg md:w-[244px]"
+        className="account-settings-popover popover-ui z-[125] w-[min(92vw,320px)] rounded-lg"
         placement={collapsed ? 'right-end' : undefined}
         style={{
           transformOrigin: collapsed ? 'left bottom' : 'bottom',
           translate: collapsed ? '4px 0' : '0 -4px',
         }}
       >
-        <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
-          {user?.email ?? localize('com_nav_user')}
-        </div>
-        <DropdownMenuSeparator />
-        {startupConfig?.balance?.enabled === true && balanceQuery.data != null && (
-          <>
-            <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
-              {localize('com_nav_balance')}:{' '}
-              {new Intl.NumberFormat().format(Math.round(balanceQuery.data.tokenCredits))}
+        <div className="flex items-center gap-3 px-3 py-3" role="note">
+          <div className="h-10 w-10 flex-shrink-0">
+            <Avatar user={user} size={40} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-sm font-semibold text-text-primary">
+              {user?.name ?? user?.username ?? localize('com_nav_user')}
             </div>
-            <DropdownMenuSeparator />
-          </>
-        )}
+            <div className="truncate text-xs text-text-tertiary">{user?.email ?? ''}</div>
+          </div>
+        </div>
+        {activeBudgets.length > 0 ? (
+          activeBudgets.map((b) => {
+            const remainingUsd = (b.remainingCredits ?? 0) / 1_000_000;
+            const allocatedUsd = (b.allocatedCredits ?? 0) / 1_000_000;
+            return (
+              <div
+                key={b.bucket}
+                className="flex items-center justify-between gap-3 px-3 py-2 text-xs"
+                role="note"
+              >
+                <span className="truncate text-text-tertiary">Saldo restante</span>
+                <span
+                  className="tabular-nums font-bold"
+                  style={{ color: 'var(--molinos-blue)' }}
+                >
+                  ${remainingUsd.toFixed(2)} / ${allocatedUsd.toFixed(2)}
+                </span>
+              </div>
+            );
+          })
+        ) : startupConfig?.balance?.enabled === true && balanceQuery.data != null ? (
+          <div
+            className="flex items-center justify-between gap-3 px-3 py-2 text-xs"
+            role="note"
+          >
+            <span className="truncate text-text-tertiary">
+              {localize('com_nav_balance')}
+            </span>
+            <span className="tabular-nums text-text-primary">
+              {new Intl.NumberFormat().format(Math.round(balanceQuery.data.tokenCredits))}
+            </span>
+          </div>
+        ) : null}
+        <DropdownMenuSeparator />
         <Menu.MenuItem onClick={() => setShowFiles(true)} className="select-item text-sm">
           <FileText className="icon-md" aria-hidden="true" />
           {localize('com_nav_my_files')}
@@ -87,8 +127,12 @@ function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
           {localize('com_nav_settings')}
         </Menu.MenuItem>
         <DropdownMenuSeparator />
-        <Menu.MenuItem onClick={() => logout()} className="select-item text-sm">
-          <LogOut className="icon-md" aria-hidden="true" />
+        <Menu.MenuItem
+          onClick={() => logout()}
+          className="select-item text-sm"
+          style={{ color: 'var(--molinos-red)' }}
+        >
+          <LogOut className="icon-md" aria-hidden="true" style={{ color: 'var(--molinos-red)' }} />
           {localize('com_nav_log_out')}
         </Menu.MenuItem>
       </Menu.Menu>
