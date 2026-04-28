@@ -5,6 +5,12 @@
    can re-skin without touching upstream component code.
    ============================================================= */
 
+/* Disable elastic / bounce overscroll on the whole document. */
+html,
+body {
+  overscroll-behavior: none;
+}
+
 :root {
   /* ---- Molinos brand palette --------------------------------- */
   --molinos-blue: rgb(34, 64, 154);          /* #22409A — dominant */
