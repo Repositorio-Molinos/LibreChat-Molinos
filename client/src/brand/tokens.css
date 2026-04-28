@@ -59,11 +59,58 @@
   --text-link: var(--molinos-blue);
 }
 
-/* ---- DARK MODE — keep contrast, lean institutional --------- */
-.dark {
-  /* shift to deep institutional blue-night */
-  --presentation: var(--molinos-blue-night);
-  --surface-chat: var(--molinos-blue-night);
+/* ---- DARK MODE — Molinos blue-night palette per handoff ----
+   Override LibreChat's gray-based dark surfaces with a deep
+   institutional blue stack. */
+html.dark {
+  /* Brand blue-night canvas */
+  --presentation:                var(--molinos-blue-night);   /* #0D1B5E */
+  --surface-chat:                var(--molinos-blue-night);
+  --surface-primary:             #0a1448;                     /* canvas */
+  --surface-primary-alt:         #081039;                     /* sidebar shade */
+  --surface-primary-contrast:    #0a1448;
+  --surface-secondary:           #0f1d56;
+  --surface-secondary-alt:       #0f1d56;
+  --surface-tertiary:            #142567;
+  --surface-tertiary-alt:        #142567;
+  --surface-dialog:              #0f1d56;
+
+  /* Hover / active layers — translucent whites over the blue */
+  --surface-hover:               rgba(255, 255, 255, 0.06);
+  --surface-hover-alt:           rgba(255, 255, 255, 0.10);
+  --surface-active:              rgba(255, 255, 255, 0.10);
+  --surface-active-alt:          rgba(255, 255, 255, 0.14);
+
+  /* Header chrome */
+  --header-primary:              #0a1448;
+  --header-hover:                rgba(255, 255, 255, 0.06);
+  --header-button-hover:         rgba(255, 255, 255, 0.06);
+
+  /* Text + borders aligned with handoff fg-* tokens */
+  --text-primary:                rgba(255, 255, 255, 0.94);
+  --text-secondary:              rgba(255, 255, 255, 0.62);
+  --text-secondary-alt:          rgba(255, 255, 255, 0.55);
+  --text-tertiary:               rgba(255, 255, 255, 0.40);
+  --border-light:                rgba(255, 255, 255, 0.08);
+  --border-medium:               rgba(255, 255, 255, 0.14);
+  --border-medium-alt:           rgba(255, 255, 255, 0.14);
+  --border-heavy:                rgba(255, 255, 255, 0.22);
+
+  /* Submit button stays Molinos red even in dark */
+  --surface-submit:              var(--molinos-red);
+  --surface-submit-hover:        var(--molinos-red-dark);
+
+  /* Tailwind shadcn vars (HSL triplets) — match the deep blue */
+  --background:                  226 60% 16%;   /* ~#142567 */
+  --foreground:                  0 0% 98%;
+  --card:                        226 64% 14%;
+  --card-foreground:             0 0% 98%;
+  --muted:                       226 50% 22%;
+  --muted-foreground:            0 0% 70%;
+  --accent:                      226 50% 22%;
+  --accent-foreground:           0 0% 98%;
+  --border:                      226 30% 28%;
+  --input:                       226 30% 28%;
 }
 
 /* =============================================================
@@ -80,6 +127,14 @@
   /* Override surface vars within the sidebar subtree only */
   --surface-primary-alt: var(--molinos-blue-darker);
   --surface-primary: var(--molinos-blue-darker);
+}
+/* Dark mode: sidebar drops one stop deeper per handoff (#081039) */
+html.dark [data-brand-zone="sidebar"] {
+  --surface-primary-alt: #081039;
+  --surface-primary: #081039;
+  background-color: #081039;
+}
+[data-brand-zone="sidebar"] {
   --surface-active-alt: rgba(255, 255, 255, 0.14);
   --surface-hover: rgba(255, 255, 255, 0.06);
   --surface-hover-alt: rgba(255, 255, 255, 0.10);
@@ -309,6 +364,194 @@
 
 [data-brand-zone="header"] {
   border-bottom: 1px solid var(--border-subtle, rgba(15, 17, 25, 0.08));
+}
+
+/* =============================================================
+   Chat zone — message bubbles per Molinos handoff
+   Activated via data-brand-zone="chat" on the chat root.
+   ============================================================= */
+
+/* Whole row reverses for user messages so avatar lands on the right */
+[data-brand-zone="chat"] .message-render {
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+[data-brand-zone="chat"] .message-render:has(.user-turn) {
+  flex-direction: row-reverse !important;
+}
+
+/* Avatar slot: 32px circle, brand-colored per author */
+[data-brand-zone="chat"] .message-render > div:first-child > div {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+[data-brand-zone="chat"] .message-render:has(.user-turn) > div:first-child > div {
+  background-color: var(--molinos-blue) !important;
+  color: #fff !important;
+}
+[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div {
+  background-color: var(--molinos-red) !important;
+  color: #fff !important;
+  position: relative;
+  overflow: hidden;
+}
+/* Hide the upstream MessageIcon (Claude logo etc.) and stamp a white "M" instead */
+[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div > * {
+  display: none !important;
+}
+[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div::after {
+  content: "M";
+  display: block;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+/* Body column — limit width, gap, alignment */
+[data-brand-zone="chat"] .user-turn,
+[data-brand-zone="chat"] .agent-turn {
+  max-width: 78% !important;
+  width: auto !important;
+  gap: 6px !important;
+}
+[data-brand-zone="chat"] .user-turn {
+  align-items: flex-end !important;
+}
+[data-brand-zone="chat"] .agent-turn {
+  align-items: flex-start !important;
+}
+
+/* Author label (h2 messageLabel) — restyle as small meta line */
+[data-brand-zone="chat"] .user-turn > h2,
+[data-brand-zone="chat"] .agent-turn > h2 {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--text-tertiary) !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+}
+[data-brand-zone="chat"] .user-turn > h2 {
+  text-align: right !important;
+}
+
+/* Bubble — apply visual to MessageContent's wrapper. */
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow,
+[data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+  padding: 12px 16px;
+  border-radius: 24px;
+  font-size: 15px;
+  line-height: 1.55;
+  box-shadow: var(--brand-shadow-sm);
+}
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow {
+  background-color: var(--molinos-blue);
+  color: #fff;
+  border-bottom-right-radius: 8px;
+}
+[data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-bottom-left-radius: 8px;
+}
+.dark [data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+/* Code/links/text inside user bubble inherit white */
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow *,
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow code {
+  color: #fff !important;
+}
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow code {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Action icon buttons in chat (hover row + composer attach/voice/etc.)
+   Subtle gray default → primary on hover. */
+[data-brand-zone="chat"] button > svg,
+[data-brand-zone="chat"] [role="button"] > svg {
+  color: rgba(15, 17, 25, 0.42);
+  transition: color 120ms var(--brand-ease-soft);
+}
+[data-brand-zone="chat"] button:hover > svg,
+[data-brand-zone="chat"] [role="button"]:hover > svg {
+  color: rgba(15, 17, 25, 0.85);
+}
+.dark [data-brand-zone="chat"] button > svg,
+.dark [data-brand-zone="chat"] [role="button"] > svg {
+  color: rgba(255, 255, 255, 0.45);
+}
+.dark [data-brand-zone="chat"] button:hover > svg,
+.dark [data-brand-zone="chat"] [role="button"]:hover > svg {
+  color: rgba(255, 255, 255, 0.90);
+}
+/* Don't soften CTA buttons (submit / send) — they keep brand red */
+[data-brand-zone="chat"] button[type="submit"] > svg,
+[data-brand-zone="chat"] button[data-brand-cta="true"] > svg {
+  color: #fff !important;
+}
+/* Avatar svgs are intentionally hidden by other rules — don't fight them */
+[data-brand-zone="chat"] .message-render > div:first-child > div > svg {
+  color: inherit;
+}
+
+/* Hover actions row (SubRow) — visible only on hover */
+[data-brand-zone="chat"] .message-render > div:last-child > div > div:last-child {
+  opacity: 0;
+  transition: opacity 120ms var(--brand-ease-soft);
+}
+[data-brand-zone="chat"] .message-render:hover > div:last-child > div > div:last-child,
+[data-brand-zone="chat"] .message-render:focus-within > div:last-child > div > div:last-child {
+  opacity: 1;
+}
+
+/* ============================================================
+   Chatbox (composer) — slightly narrower, more inner padding,
+   subtle translucent surface in dark mode.
+   ============================================================ */
+[data-brand-zone="chat"] form {
+  margin-bottom: 8px !important;
+}
+/* Narrower max width than upstream md:max-w-3xl xl:max-w-4xl */
+@media (min-width: 768px) {
+  [data-brand-zone="chat"] form {
+    max-width: 720px !important;
+  }
+}
+@media (min-width: 1280px) {
+  [data-brand-zone="chat"] form {
+    max-width: 760px !important;
+  }
+}
+/* Chatbox container — extra inner padding, brand radius */
+[data-brand-zone="chat"] form .bg-surface-chat {
+  padding-bottom: 10px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-radius: 24px !important;
+}
+/* Dark mode: chatbox surface = subtle translucent white over the deep blue */
+html.dark [data-brand-zone="chat"] form .bg-surface-chat {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Footer — sit tight to the chatbox */
+[data-brand-zone="chat"] [role="contentinfo"] {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  font-size: 11px !important;
+  color: var(--text-tertiary) !important;
 }
 
 /* =============================================================

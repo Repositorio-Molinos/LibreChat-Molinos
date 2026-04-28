@@ -82,7 +82,7 @@ function ChatView({ index = 0 }: { index?: number }) {
       <ChatContext.Provider value={chatHelpers}>
         <AddedChatContext.Provider value={addedChatHelpers}>
           <Presentation>
-            <div className="relative flex h-full w-full flex-col">
+            <div data-brand-zone="chat" className="relative flex h-full w-full flex-col">
               <Header />
               <>
                 <div

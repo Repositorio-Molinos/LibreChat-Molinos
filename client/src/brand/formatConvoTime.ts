@@ -27,8 +27,17 @@ export function formatConvoTime(input: string | Date | undefined | null, locale 
 
   const diffDays = Math.floor((now.getTime() - date.getTime()) / 86_400_000);
   if (diffDays >= 0 && diffDays < 7) {
-    return date.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '');
+    const day = date.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '');
+    return capitalize(day);
   }
 
-  return date.toLocaleDateString(locale, { day: 'numeric', month: 'short' }).replace('.', '');
+  const formatted = date
+    .toLocaleDateString(locale, { day: 'numeric', month: 'short' })
+    .replace('.', '');
+  return formatted.replace(/\b([a-z])/g, (m) => m.toUpperCase());
+}
+
+function capitalize(s: string): string {
+  if (!s) return s;
+  return s[0].toUpperCase() + s.slice(1);
 }
