@@ -138,7 +138,7 @@ function ExpandedPanel({
   const toggleClick = expanded ? onCollapse : onExpand;
 
   return (
-    <div className="flex h-full flex-shrink-0 flex-col gap-2 border-r border-border-light bg-surface-primary-alt py-3 pl-2 pr-3">
+    <div className="flex h-full flex-shrink-0 flex-col gap-2 border-r border-border-light bg-surface-primary-alt px-2.5 py-3">
       <div className="flex items-center justify-center pb-1">
         <BrandLogo />
       </div>
