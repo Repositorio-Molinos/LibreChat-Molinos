@@ -1,0 +1,329 @@
+/* =============================================================
+   Molinos Brand Tokens — single source of truth
+   Imported once from `client/src/style.css`. Maps Molinos design
+   system values into LibreChat's existing semantic CSS vars so we
+   can re-skin without touching upstream component code.
+   ============================================================= */
+
+:root {
+  /* ---- Molinos brand palette --------------------------------- */
+  --molinos-blue: rgb(34, 64, 154);          /* #22409A — dominant */
+  --molinos-blue-dark: rgb(27, 50, 129);
+  --molinos-blue-darker: rgb(20, 39, 111);
+  --molinos-blue-night: rgb(13, 27, 94);
+
+  --molinos-red: rgb(236, 28, 36);           /* #EC1C24 — CTAs */
+  --molinos-red-dark: rgb(215, 25, 32);
+  --molinos-red-darker: rgb(189, 27, 33);
+
+  --molinos-yellow: rgb(255, 203, 5);
+  --molinos-orange: rgb(211, 65, 42);
+  --molinos-green: rgb(0, 104, 72);
+
+  /* ---- Brand-aligned neutrals (cool undertone) -------------- */
+  --molinos-neutral-50:  #f7f8fb;
+  --molinos-neutral-100: #f1f3f8;
+  --molinos-neutral-200: #e4e7ef;
+  --molinos-neutral-300: #cccfdb;
+  --molinos-neutral-400: #a1a5b0;
+  --molinos-neutral-500: #6b7080;
+  --molinos-neutral-600: #4a4f5e;
+  --molinos-neutral-700: #2e3242;
+  --molinos-neutral-800: #1a1d2b;
+  --molinos-neutral-900: #0f1119;
+
+  /* ---- Brand shape ------------------------------------------ */
+  --brand-radius-pill: 999px;
+  --brand-radius-xl: 28px;
+  --brand-radius-lg: 20px;
+  --brand-radius-md: 14px;
+  --brand-radius-sm: 10px;
+
+  /* ---- Brand shadows (tinted into institutional blue) ------- */
+  --brand-shadow-sm: 0 1px 3px rgba(20, 39, 111, 0.08), 0 1px 2px rgba(20, 39, 111, 0.04);
+  --brand-shadow-md: 0 4px 12px rgba(20, 39, 111, 0.10), 0 2px 4px rgba(20, 39, 111, 0.06);
+  --brand-shadow-lg: 0 12px 28px rgba(20, 39, 111, 0.14), 0 4px 8px rgba(20, 39, 111, 0.06);
+  --brand-shadow-focus: 0 0 0 3px rgba(34, 64, 154, 0.25);
+
+  /* ---- Motion ----------------------------------------------- */
+  --brand-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --brand-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Map LibreChat semantic vars to brand palette --------- */
+  /* Accent / CTA — pisamos a rojo Molinos */
+  --surface-submit: var(--molinos-red);
+  --surface-submit-hover: var(--molinos-red-dark);
+  --ring-primary: var(--molinos-blue);
+
+  /* Text / link tone leans into brand blue */
+  --text-link: var(--molinos-blue);
+}
+
+/* ---- DARK MODE — keep contrast, lean institutional --------- */
+.dark {
+  /* shift to deep institutional blue-night */
+  --presentation: var(--molinos-blue-night);
+  --surface-chat: var(--molinos-blue-night);
+}
+
+/* =============================================================
+   Scoped overrides: sidebar = dark institutional blue
+   Activated via `data-brand-zone="sidebar"` on the sidebar root.
+   Keeps LibreChat semantic vars stock everywhere else.
+   ============================================================= */
+
+[data-brand-zone="sidebar"] {
+  /* Subtle elevation — sidebar reads as floating above chat surface */
+  box-shadow: 4px 0 14px -2px rgba(20, 39, 111, 0.18);
+  z-index: 10;
+
+  /* Override surface vars within the sidebar subtree only */
+  --surface-primary-alt: var(--molinos-blue-darker);
+  --surface-primary: var(--molinos-blue-darker);
+  --surface-active-alt: rgba(255, 255, 255, 0.14);
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --surface-hover-alt: rgba(255, 255, 255, 0.10);
+  --text-primary: rgba(255, 255, 255, 0.92);
+  --text-secondary: rgba(255, 255, 255, 0.62);
+  --text-tertiary: rgba(255, 255, 255, 0.40);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-medium-alt: rgba(255, 255, 255, 0.14);
+  --border-heavy: rgba(255, 255, 255, 0.22);
+
+  background-color: var(--molinos-blue-darker);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Sidebar: rounded items per Molinos shape language */
+[data-brand-zone="sidebar"] button,
+[data-brand-zone="sidebar"] a {
+  border-radius: var(--brand-radius-md);
+}
+
+/* Sidebar: search bar adopts brand input styling */
+[data-brand-zone="sidebar"] input[type="text"],
+[data-brand-zone="sidebar"] input[type="search"] {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--brand-radius-md);
+}
+[data-brand-zone="sidebar"] input[type="text"]::placeholder,
+[data-brand-zone="sidebar"] input[type="search"]::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+[data-brand-zone="sidebar"] input[type="text"]:focus,
+[data-brand-zone="sidebar"] input[type="search"]:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.30);
+  outline: none;
+}
+
+/* Sidebar: scrollbar tinted for dark surface */
+[data-brand-zone="sidebar"] ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+[data-brand-zone="sidebar"] ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.30);
+}
+
+/* Sidebar: hide per-conversation endpoint icons (mockup uses no icons in chat list) */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] svg.endpoint-icon,
+[data-brand-zone="sidebar"] [data-testid="convo-item"] [data-endpoint-icon] {
+  display: none !important;
+}
+
+/* Sidebar: section labels (Hoy / Esta semana / Anteriores) */
+[data-brand-zone="sidebar"] .convo-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 12px 12px 6px;
+}
+
+/* Brand chat-row timestamp below title — tight stacking */
+[data-brand-zone="sidebar"] [data-brand-convo-time] {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-top: 1px;
+}
+
+/* Chat row: taller, breathable padding, gap between rows, no internal box border */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] {
+  height: auto !important;
+  min-height: 52px;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  border-radius: var(--brand-radius-md);
+  border: 0;
+}
+/* Kill the absolute pseudo-element accent (was 2px straight bar) */
+[data-brand-zone="sidebar"] [data-testid="convo-item"]::before {
+  display: none !important;
+  content: none !important;
+}
+/* Active row: solid border-left in Molinos red — follows the row's rounded corners */
+[data-brand-zone="sidebar"] [data-testid="convo-item"].bg-surface-active-alt {
+  border-left: 3px solid var(--molinos-red);
+  padding-left: 7px;
+}
+
+/* Active row — single highlight only (kill any inner bg-surface-active-alt) */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] .bg-surface-active-alt {
+  background-color: transparent !important;
+}
+
+/* Kill the title-fade gradient overlay — it draws a second rounded box
+   on hover/active that doesn't quite match the row outline. */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] [class*="bg-gradient-to-l"] {
+  display: none !important;
+}
+
+/* Date group label (Hoy / Últimos 7 días / Anteriores) — extra top breathing */
+[data-brand-zone="sidebar"] h2.text-text-secondary {
+  margin-top: 18px !important;
+  padding-top: 6px !important;
+  padding-bottom: 4px;
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+[data-brand-zone="sidebar"] h2.text-text-secondary.mt-0 {
+  margin-top: 4px !important;
+}
+
+/* Hide collapsible Chats header row inside the chats pane (no point: already in chats submenu) */
+[data-brand-zone="sidebar"] [data-chats-header] {
+  display: none !important;
+}
+
+/* ============================================================
+   Pane header (Conversaciones + Nuevo CTA)
+   ============================================================ */
+[data-brand-zone="sidebar"] [data-brand-pane-header] h3 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+[data-brand-zone="sidebar"] [data-brand-pane-cta] {
+  background-color: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.95);
+}
+[data-brand-zone="sidebar"] [data-brand-pane-cta]:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Pane search row — handoff spec: single bar, transparent border default,
+   subtle border-only on focus, no box-shadow ring. */
+[data-brand-zone="sidebar"] [data-brand-pane-search] > div {
+  position: relative;
+  width: 100%;
+  height: 36px !important;
+  border-radius: 10px !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  cursor: text !important;
+  transition: background-color 120ms var(--brand-ease-soft),
+              border-color 120ms var(--brand-ease-soft);
+}
+/* Input fills the full clickable area so click anywhere focuses it */
+[data-brand-zone="sidebar"] [data-brand-pane-search] input {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 12px 0 32px !important;
+  margin: 0 !important;
+}
+/* Disable hover effect — only active/focus changes appearance */
+[data-brand-zone="sidebar"] [data-brand-pane-search] > div:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: transparent !important;
+}
+/* Active (focus-within) — handoff: brighter bg + subtle border, no outer ring */
+[data-brand-zone="sidebar"] [data-brand-pane-search] > div:focus-within {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+[data-brand-zone="sidebar"] [data-brand-pane-search] input {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.95);
+}
+[data-brand-zone="sidebar"] [data-brand-pane-search] input::placeholder {
+  color: rgba(255, 255, 255, 0.50);
+}
+/* Kill any inner focus ring / outline / box-shadow on the input or icon
+   so only the outer container shows the focus state. */
+[data-brand-zone="sidebar"] [data-brand-pane-search] input,
+[data-brand-zone="sidebar"] [data-brand-pane-search] input:focus,
+[data-brand-zone="sidebar"] [data-brand-pane-search] input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+/* X clear button: don't render the round slot when it's invisible */
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[aria-label*="clear" i],
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[aria-label*="borrar" i],
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[aria-label*="limpiar" i] {
+  border-radius: var(--brand-radius-sm) !important;
+}
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[disabled] {
+  display: none !important;
+}
+/* Lupa icon: no bg, no ring, just a glyph */
+[data-brand-zone="sidebar"] [data-brand-pane-search] svg {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* ============================================================
+   Rail icon buttons — bigger tap target / breathable padding
+   ============================================================ */
+[data-brand-zone="sidebar"] .h-9.w-9 {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: var(--brand-radius-md) !important;
+}
+
+
+/* =============================================================
+   Header zone — white surface but brand-tinted controls
+   ============================================================= */
+
+[data-brand-zone="header"] {
+  border-bottom: 1px solid var(--border-subtle, rgba(15, 17, 25, 0.08));
+}
+
+/* =============================================================
+   CTA buttons globally use Molinos red (the only primary CTA)
+   ============================================================= */
+
+button[type="submit"]:not([data-brand-cta="false"]) {
+  background-color: var(--molinos-red);
+  color: #fff;
+  transition: background-color var(--brand-ease-soft) 120ms;
+}
+button[type="submit"]:not([data-brand-cta="false"]):hover {
+  background-color: var(--molinos-red-dark);
+}
+button[type="submit"]:not([data-brand-cta="false"]):active {
+  background-color: var(--molinos-red-darker);
+  transform: scale(0.98);
+}

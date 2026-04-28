@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, useMemo, memo, lazy, Suspense, useRef } from 'react';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { Plus } from 'lucide-react';
 import { useMediaQuery } from '@librechat/client';
 import { PermissionTypes, Permissions } from 'librechat-data-provider';
 import type { InfiniteQueryObserverResult } from '@tanstack/react-query';
@@ -26,7 +27,9 @@ const ConversationsSection = memo(() => {
   const { isAuthenticated } = useAuthContext();
   useTitleGeneration(isAuthenticated);
 
-  const [isChatsExpanded, setIsChatsExpanded] = useLocalStorage('chatsExpanded', true);
+  // Brand: chats list is always expanded inside the chats pane (no accordion).
+  const isChatsExpanded = true;
+  const setIsChatsExpanded = () => {};
   const [showLoading, setShowLoading] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
 
@@ -108,14 +111,24 @@ const ConversationsSection = memo(() => {
       role="region"
       aria-label={localize('com_ui_chat_history')}
     >
-      <div className="flex items-center gap-0.5 px-3">
-        {hasAccessToBookmarks && (
-          <Suspense fallback={null}>
-            <BookmarkNav tags={tags} setTags={setTags} />
-          </Suspense>
-        )}
-        {search.enabled && <SearchBar isSmallScreen={isSmallScreen} />}
+      <div data-brand-pane-header className="flex items-center justify-between px-4 pb-3 pt-2">
+        <h3 className="text-sm font-bold tracking-tight">
+          {localize('com_ui_chats')}
+        </h3>
+        <a
+          href="/c/new"
+          data-brand-pane-cta
+          className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>{localize('com_ui_new_chat')}</span>
+        </a>
       </div>
+      {search.enabled && (
+        <div data-brand-pane-search className="px-4 pb-3">
+          <SearchBar isSmallScreen={isSmallScreen} placeholder="Buscar conversaciones..." />
+        </div>
+      )}
       <div className="flex min-h-0 flex-grow flex-col overflow-hidden">
         <Conversations
           conversations={conversations}

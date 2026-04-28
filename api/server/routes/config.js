@@ -121,6 +121,40 @@ function buildSharedPayload() {
     payload.interface.brand = { ...(payload.interface.brand || {}), ...brand };
   }
 
+  // Optional interface flag overrides via env vars. Use to disable features
+  // per environment (e.g. INTERFACE_MARKETPLACE=false in k8s) without
+  // editing librechat.yaml.
+  const interfaceOverrides = {};
+  const envFlag = (key) => {
+    const v = process.env[key];
+    if (v === 'true') return true;
+    if (v === 'false') return false;
+    return undefined;
+  };
+  const flagMap = {
+    INTERFACE_MARKETPLACE: 'marketplace',
+    INTERFACE_REMOTE_AGENTS: 'remoteAgents',
+    INTERFACE_PROMPTS: 'prompts',
+    INTERFACE_AGENTS: 'agents',
+    INTERFACE_MCP_SERVERS: 'mcpServers',
+  };
+  for (const [envKey, configKey] of Object.entries(flagMap)) {
+    const v = envFlag(envKey);
+    if (v !== undefined) {
+      interfaceOverrides[configKey] = { use: v };
+    }
+  }
+  const simpleFlags = ['memories', 'bookmarks', 'webSearch', 'runCode', 'fileSearch', 'fileCitations', 'temporaryChat', 'multiConvo', 'modelSelect', 'parameters'];
+  for (const key of simpleFlags) {
+    const v = envFlag(`INTERFACE_${key.replace(/([A-Z])/g, '_$1').toUpperCase()}`);
+    if (v !== undefined) {
+      interfaceOverrides[key] = v;
+    }
+  }
+  if (Object.keys(interfaceOverrides).length > 0) {
+    payload.interface = { ...(payload.interface || {}), ...interfaceOverrides };
+  }
+
   return payload;
 }
 
@@ -181,7 +215,8 @@ router.get('/', async function (req, res) {
     const payload = {
       ...sharedPayload,
       socialLogins: appConfig?.registration?.socialLogins ?? defaultSocialLogins,
-      interface: { ...(sharedPayload.interface || {}), ...(appConfig?.interfaceConfig || {}) },
+      // Brand env overrides (in sharedPayload.interface) win over yaml interfaceConfig.
+      interface: { ...(appConfig?.interfaceConfig || {}), ...(sharedPayload.interface || {}) },
       turnstile: appConfig?.turnstileConfig,
       modelSpecs: appConfig?.modelSpecs,
       balance: balanceConfig,

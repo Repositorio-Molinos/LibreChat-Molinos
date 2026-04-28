@@ -178,6 +178,7 @@ function UnifiedSidebar() {
     <SidebarChatProvider>
       <ActivePanelProvider>
         <aside
+          data-brand-zone="sidebar"
           className="relative flex h-full flex-shrink-0 overflow-hidden"
           style={{
             width: expanded ? sidebarWidth : COLLAPSED_WIDTH,
