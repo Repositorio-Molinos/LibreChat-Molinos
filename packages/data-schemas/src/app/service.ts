@@ -96,6 +96,7 @@ export const AppService = async (params?: {
     startBalance: startBalance ? parseInt(startBalance, 10) : undefined,
   };
   const transactions = config.transactions ?? configDefaults.transactions;
+  const modelBudgets = config.modelBudgets ?? null;
   const imageOutputType = config?.imageOutputType ?? configDefaults.imageOutputType;
 
   process.env.CDN_PROVIDER = fileStrategy;
@@ -117,6 +118,7 @@ export const AppService = async (params?: {
     memory,
     speech,
     balance,
+    modelBudgets,
     actions,
     webSearch,
     mcpSettings,

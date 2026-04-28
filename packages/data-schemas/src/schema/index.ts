@@ -4,6 +4,7 @@ export { default as agentApiKeySchema } from './agentApiKey';
 export { default as agentCategorySchema } from './agentCategory';
 export { default as assistantSchema } from './assistant';
 export { default as balanceSchema } from './balance';
+export { default as modelBudgetSchema } from './modelBudget';
 export { default as bannerSchema } from './banner';
 export { default as categoriesSchema } from './categories';
 export { default as conversationTagSchema } from './conversationTag';

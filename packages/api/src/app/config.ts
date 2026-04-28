@@ -4,7 +4,12 @@ import {
   removeNullishValues,
   normalizeEndpointName,
 } from 'librechat-data-provider';
-import type { TCustomConfig, TEndpoint, TTransactionsConfig } from 'librechat-data-provider';
+import type {
+  TCustomConfig,
+  TEndpoint,
+  TTransactionsConfig,
+  TModelBudgetsConfig,
+} from 'librechat-data-provider';
 import type { AppConfig } from '@librechat/data-schemas';
 import { isEnabled } from '~/utils';
 
@@ -49,6 +54,18 @@ export function getTransactionsConfig(appConfig?: AppConfig): Partial<TTransacti
   }
 
   return transactionsConfig;
+}
+
+/**
+ * Retrieves the per-user, per-model bucket budgets configuration. Returns
+ * `null` when the feature is disabled (default) so callers can short-circuit.
+ */
+export function getModelBudgetsConfig(appConfig?: AppConfig): TModelBudgetsConfig | null {
+  const cfg = appConfig?.modelBudgets as TModelBudgetsConfig | undefined;
+  if (!cfg || !cfg.enabled) {
+    return null;
+  }
+  return cfg;
 }
 
 export const getCustomEndpointConfig = ({

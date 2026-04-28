@@ -1,6 +1,7 @@
 const validatePasswordReset = require('./validatePasswordReset');
 const validateRegistration = require('./validateRegistration');
 const buildEndpointOption = require('./buildEndpointOption');
+const checkModelBudget = require('./checkModelBudget');
 const validateMessageReq = require('./validateMessageReq');
 const checkDomainAllowed = require('./checkDomainAllowed');
 const requireLocalAuth = require('./requireLocalAuth');
@@ -44,6 +45,7 @@ module.exports = {
   checkDomainAllowed,
   validateMessageReq,
   buildEndpointOption,
+  checkModelBudget,
   validateRegistration,
   validatePasswordReset,
 };

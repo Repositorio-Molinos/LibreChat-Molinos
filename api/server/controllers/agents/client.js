@@ -13,6 +13,7 @@ const {
   createSafeUser,
   initializeAgent,
   getBalanceConfig,
+  getModelBudgetsConfig,
   omitTitleOptions,
   getProviderConfig,
   memoryInstructions,
@@ -652,6 +653,7 @@ class AgentClient extends BaseClient {
     model,
     balance,
     transactions,
+    modelBudgets,
     context = 'message',
     collectedUsage = this.collectedUsage,
   }) {
@@ -660,7 +662,12 @@ class AgentClient extends BaseClient {
         spendTokens: db.spendTokens,
         spendStructuredTokens: db.spendStructuredTokens,
         pricing: { getMultiplier: db.getMultiplier, getCacheMultiplier: db.getCacheMultiplier },
-        bulkWriteOps: { insertMany: db.bulkInsertTransactions, updateBalance: db.updateBalance },
+        bulkWriteOps: {
+          insertMany: db.bulkInsertTransactions,
+          updateBalance: db.updateBalance,
+          recordModelBudgetUsage: db.recordUsage,
+          getBucketForModel: db.getBucketForModel,
+        },
       },
       {
         user: this.user ?? this.options.req.user?.id,
@@ -671,6 +678,7 @@ class AgentClient extends BaseClient {
         messageId: this.responseMessageId,
         balance,
         transactions,
+        modelBudgets,
         endpointTokenConfig: this.options.endpointTokenConfig,
       },
     );
@@ -712,6 +720,7 @@ class AgentClient extends BaseClient {
     const appConfig = this.options.req.config;
     const balanceConfig = getBalanceConfig(appConfig);
     const transactionsConfig = getTransactionsConfig(appConfig);
+    const modelBudgetsConfig = getModelBudgetsConfig(appConfig);
     try {
       if (!abortController) {
         abortController = new AbortController();
@@ -925,6 +934,7 @@ class AgentClient extends BaseClient {
             context: 'message',
             balance: balanceConfig,
             transactions: transactionsConfig,
+            modelBudgets: modelBudgetsConfig,
           });
         } else {
           logger.debug(
@@ -1134,12 +1144,14 @@ class AgentClient extends BaseClient {
 
       const balanceConfig = getBalanceConfig(appConfig);
       const transactionsConfig = getTransactionsConfig(appConfig);
+      const modelBudgetsConfig = getModelBudgetsConfig(appConfig);
       await this.recordCollectedUsage({
         collectedUsage,
         context: 'title',
         model: clientOptions.model,
         balance: balanceConfig,
         transactions: transactionsConfig,
+        modelBudgets: modelBudgetsConfig,
         messageId: this.responseMessageId,
       }).catch((err) => {
         logger.error(
@@ -1169,6 +1181,7 @@ class AgentClient extends BaseClient {
     model,
     usage,
     balance,
+    modelBudgets,
     promptTokens,
     completionTokens,
     context = 'message',
@@ -1179,6 +1192,7 @@ class AgentClient extends BaseClient {
           model,
           context,
           balance,
+          modelBudgets,
           messageId: this.responseMessageId,
           conversationId: this.conversationId,
           user: this.user ?? this.options.req.user?.id,
@@ -1197,6 +1211,7 @@ class AgentClient extends BaseClient {
           {
             model,
             balance,
+            modelBudgets,
             context: 'reasoning',
             messageId: this.responseMessageId,
             conversationId: this.conversationId,

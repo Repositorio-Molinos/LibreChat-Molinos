@@ -17,6 +17,7 @@ const {
   validateRequest,
   initializeAgent,
   getBalanceConfig,
+  getModelBudgetsConfig,
   createErrorResponse,
   recordCollectedUsage,
   getTransactionsConfig,
@@ -627,12 +628,18 @@ const OpenAIChatCompletionController = async (req, res) => {
     // Record token usage against balance
     const balanceConfig = getBalanceConfig(appConfig);
     const transactionsConfig = getTransactionsConfig(appConfig);
+    const modelBudgetsConfig = getModelBudgetsConfig(appConfig);
     recordCollectedUsage(
       {
         spendTokens: db.spendTokens,
         spendStructuredTokens: db.spendStructuredTokens,
         pricing: { getMultiplier: db.getMultiplier, getCacheMultiplier: db.getCacheMultiplier },
-        bulkWriteOps: { insertMany: db.bulkInsertTransactions, updateBalance: db.updateBalance },
+        bulkWriteOps: {
+          insertMany: db.bulkInsertTransactions,
+          updateBalance: db.updateBalance,
+          recordModelBudgetUsage: db.recordUsage,
+          getBucketForModel: db.getBucketForModel,
+        },
       },
       {
         user: userId,
@@ -642,6 +649,7 @@ const OpenAIChatCompletionController = async (req, res) => {
         messageId: responseId,
         balance: balanceConfig,
         transactions: transactionsConfig,
+        modelBudgets: modelBudgetsConfig,
         model: primaryConfig.model || agent.model_parameters?.model,
       },
     ).catch((err) => {
