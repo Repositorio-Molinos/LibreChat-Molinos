@@ -22,6 +22,7 @@ export default function BrandFloater({ variant }: { variant: 'fixed' | 'absolute
       src={src}
       alt=""
       aria-hidden="true"
+      data-brand-floater={variant}
       className={`pointer-events-none z-10 h-36 w-auto object-contain drop-shadow-xl sm:h-44 ${positioning}`}
       draggable={false}
     />

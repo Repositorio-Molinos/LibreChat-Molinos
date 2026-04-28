@@ -357,6 +357,22 @@ html.dark [data-brand-zone="sidebar"] {
   border-radius: var(--brand-radius-md) !important;
 }
 
+/* Avatar trigger button — round (no rectangular hover highlight) */
+[data-brand-zone="sidebar"] button:has(.size-8),
+[data-brand-zone="sidebar"] button:has(.size-7) {
+  background: transparent !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+[data-brand-zone="sidebar"] button:has(.size-8):hover,
+[data-brand-zone="sidebar"] button:has(.size-7):hover,
+[data-brand-zone="sidebar"] button:has(.size-8)[aria-expanded="true"],
+[data-brand-zone="sidebar"] button:has(.size-7)[aria-expanded="true"] {
+  background: transparent !important;
+}
+
 
 /* =============================================================
    Header zone — white surface but brand-tinted controls
@@ -546,12 +562,119 @@ html.dark [data-brand-zone="chat"] form .bg-surface-chat {
   border-color: rgba(255, 255, 255, 0.10) !important;
 }
 
-/* Footer — sit tight to the chatbox */
+/* Footer — sit BELOW the chatbox (not absolute overlapping it).
+   Upstream renders the footer with `absolute bottom-0` which makes it
+   overlap the chatbox after our composer margin tweaks. Force it back
+   into normal flow and trim spacing. */
 [data-brand-zone="chat"] [role="contentinfo"] {
-  padding-top: 4px !important;
-  padding-bottom: 4px !important;
+  position: static !important;
+  display: flex !important;
+  padding-top: 6px !important;
+  padding-bottom: 8px !important;
   font-size: 11px !important;
   color: var(--text-tertiary) !important;
+}
+
+/* =============================================================
+   Responsive — adapts visual density and hides decorative
+   elements at narrower viewports.
+   Breakpoints:
+     • <640px  (mobile, drawer sidebar)
+     • 640–1024px (narrow desktop / tablet, browser at ~50%)
+     • ≥1024px (full desktop)
+   ============================================================= */
+
+/* Decorative player image — hide below 1024px so it doesn't crowd the chat */
+@media (max-width: 1023px) {
+  [data-brand-floater] {
+    display: none !important;
+  }
+}
+
+/* Composer — at narrow widths, fill available area */
+@media (max-width: 1023px) {
+  [data-brand-zone="chat"] form {
+    max-width: 100% !important;
+    margin-bottom: 6px !important;
+  }
+}
+/* Mobile: shrink composer with side padding so it doesn't span edge-to-edge */
+@media (max-width: 640px) {
+  [data-brand-zone="chat"] form {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  [data-brand-zone="chat"] form .bg-surface-chat {
+    border-radius: 18px !important;
+  }
+}
+
+/* Chat bubbles — give them more horizontal room when chat area is narrow */
+@media (max-width: 1023px) {
+  [data-brand-zone="chat"] .user-turn,
+  [data-brand-zone="chat"] .agent-turn {
+    max-width: 88% !important;
+  }
+}
+@media (max-width: 640px) {
+  [data-brand-zone="chat"] .user-turn,
+  [data-brand-zone="chat"] .agent-turn {
+    max-width: 92% !important;
+  }
+  /* Smaller meta + bubble padding on phones */
+  [data-brand-zone="chat"] .user-turn > h2,
+  [data-brand-zone="chat"] .agent-turn > h2 {
+    font-size: 10px !important;
+  }
+  [data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow,
+  [data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  /* Compact avatar on phones */
+  [data-brand-zone="chat"] .message-render > div:first-child > div {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px;
+  }
+  [data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div::after {
+    font-size: 14px !important;
+  }
+  /* Tighter row gap for mobile */
+  [data-brand-zone="chat"] .message-render {
+    gap: 8px !important;
+  }
+}
+
+/* Sidebar mobile drawer (rendered by UnifiedSidebar at <768px).
+   Already gets data-brand-zone="sidebar"; ensure inner pane chrome
+   adapts to the narrower drawer width. */
+@media (max-width: 767px) {
+  /* Account-menu chevron / large gaps trim down */
+  [data-brand-zone="sidebar"] .h-9.w-9 {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  /* Pane header & search padding tighten */
+  [data-brand-zone="sidebar"] [data-brand-pane-header] {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+  [data-brand-zone="sidebar"] [data-brand-pane-search] {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+
+/* Header model pill — keep it from overflowing on narrow chat header */
+@media (max-width: 1023px) {
+  [data-brand-zone="chat"] header button[aria-label*="modelo" i],
+  [data-brand-zone="chat"] header button[aria-label*="model" i] {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 /* =============================================================
