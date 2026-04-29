@@ -420,6 +420,8 @@
   "com_nav_auto_transcribe_audio": "Auto transcribe audio",
   "com_nav_automatic_playback": "Autoplay Latest Message",
   "com_nav_balance": "Balance",
+  "com_nav_balance_amount": "${{remaining}} / ${{allocated}}",
+  "com_nav_balance_remaining": "Remaining balance",
   "com_nav_balance_auto_refill_disabled": "Auto-Refill is disabled.",
   "com_nav_balance_auto_refill_error": "Error loading auto-refill settings.",
   "com_nav_balance_auto_refill_settings": "Auto-Refill Settings",

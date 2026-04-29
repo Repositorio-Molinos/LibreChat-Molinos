@@ -42,10 +42,7 @@ const ConvoLink: React.FC<ConvoLinkProps> = ({
         }}
         aria-label={title || localize('com_ui_untitled')}
       >
-        <span
-          className="overflow-hidden whitespace-nowrap"
-          style={{ textOverflow: 'ellipsis' }}
-        >
+        <span className="overflow-hidden whitespace-nowrap" style={{ textOverflow: 'ellipsis' }}>
           {title || localize('com_ui_untitled')}
         </span>
         {timestamp ? <span data-brand-convo-time>{timestamp}</span> : null}

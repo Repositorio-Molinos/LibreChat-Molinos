@@ -105,13 +105,17 @@ function buildSharedPayload() {
     brand.logoSidebar = process.env.BRAND_LOGO_SIDEBAR;
   }
   if (process.env.BRAND_LOGOS) {
-    brand.logos = process.env.BRAND_LOGOS.split(',').map((s) => s.trim()).filter(Boolean);
+    brand.logos = process.env.BRAND_LOGOS.split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
   if (process.env.BRAND_BACKGROUND) {
     brand.background = process.env.BRAND_BACKGROUND;
   }
   if (process.env.BRAND_LANDING_IMAGES) {
-    brand.landingImages = process.env.BRAND_LANDING_IMAGES.split(',').map((s) => s.trim()).filter(Boolean);
+    brand.landingImages = process.env.BRAND_LANDING_IMAGES.split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
   if (process.env.BRAND_HERO_IMAGE) {
     brand.heroImage = process.env.BRAND_HERO_IMAGE;
@@ -144,7 +148,18 @@ function buildSharedPayload() {
       interfaceOverrides[configKey] = { use: v };
     }
   }
-  const simpleFlags = ['memories', 'bookmarks', 'webSearch', 'runCode', 'fileSearch', 'fileCitations', 'temporaryChat', 'multiConvo', 'modelSelect', 'parameters'];
+  const simpleFlags = [
+    'memories',
+    'bookmarks',
+    'webSearch',
+    'runCode',
+    'fileSearch',
+    'fileCitations',
+    'temporaryChat',
+    'multiConvo',
+    'modelSelect',
+    'parameters',
+  ];
   for (const key of simpleFlags) {
     const v = envFlag(`INTERFACE_${key.replace(/([A-Z])/g, '_$1').toUpperCase()}`);
     if (v !== undefined) {

@@ -13,9 +13,7 @@ export default function BrandFloater({ variant }: { variant: 'fixed' | 'absolute
   }
 
   const positioning =
-    variant === 'fixed'
-      ? 'fixed bottom-0 right-[-40px]'
-      : 'absolute bottom-full right-[-40px]';
+    variant === 'fixed' ? 'fixed bottom-0 right-[-40px]' : 'absolute bottom-full right-[-40px]';
 
   return (
     <img

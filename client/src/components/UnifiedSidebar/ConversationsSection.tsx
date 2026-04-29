@@ -112,9 +112,7 @@ const ConversationsSection = memo(() => {
       aria-label={localize('com_ui_chat_history')}
     >
       <div data-brand-pane-header className="flex items-center justify-between px-4 pb-3 pt-2">
-        <h3 className="text-sm font-bold tracking-tight">
-          {localize('com_ui_chats')}
-        </h3>
+        <h3 className="text-sm font-bold tracking-tight">{localize('com_ui_chats')}</h3>
         <a
           href="/c/new"
           data-brand-pane-cta

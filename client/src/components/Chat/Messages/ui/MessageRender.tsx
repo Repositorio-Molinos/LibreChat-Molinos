@@ -167,13 +167,7 @@ const MessageRender = memo(function MessageRender({
       return time ? `${firstName} · ${time}` : firstName;
     }
     const modelLabel = msg.model ?? conversation?.model ?? messageLabel ?? '';
-    return [
-      'Molinos IA',
-      modelLabel,
-      time,
-    ]
-      .filter(Boolean)
-      .join(' · ');
+    return ['Molinos IA', modelLabel, time].filter(Boolean).join(' · ');
   }, [msg, user, conversation?.model, messageLabel, localize]);
   const messageId = msg?.messageId ?? '';
   const messageContextValue = useMemo(

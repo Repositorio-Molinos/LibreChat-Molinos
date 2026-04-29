@@ -85,24 +85,21 @@ function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
                 className="flex items-center justify-between gap-3 px-3 py-2 text-xs"
                 role="note"
               >
-                <span className="truncate text-text-tertiary">Saldo restante</span>
-                <span
-                  className="tabular-nums font-bold"
-                  style={{ color: 'var(--molinos-blue)' }}
-                >
-                  ${remainingUsd.toFixed(2)} / ${allocatedUsd.toFixed(2)}
+                <span className="truncate text-text-tertiary">
+                  {localize('com_nav_balance_remaining')}
+                </span>
+                <span className="font-bold tabular-nums" style={{ color: 'var(--molinos-blue)' }}>
+                  {localize('com_nav_balance_amount', {
+                    remaining: remainingUsd.toFixed(2),
+                    allocated: allocatedUsd.toFixed(2),
+                  })}
                 </span>
               </div>
             );
           })
         ) : startupConfig?.balance?.enabled === true && balanceQuery.data != null ? (
-          <div
-            className="flex items-center justify-between gap-3 px-3 py-2 text-xs"
-            role="note"
-          >
-            <span className="truncate text-text-tertiary">
-              {localize('com_nav_balance')}
-            </span>
+          <div className="flex items-center justify-between gap-3 px-3 py-2 text-xs" role="note">
+            <span className="truncate text-text-tertiary">{localize('com_nav_balance')}</span>
             <span className="tabular-nums text-text-primary">
               {new Intl.NumberFormat().format(Math.round(balanceQuery.data.tokenCredits))}
             </span>

@@ -24,7 +24,9 @@ async function balanceController(req, res) {
   let modelBudgets = null;
   try {
     const cfg = getModelBudgetsConfig(req.config);
-    logger.warn(`[balanceController] cfg=${!!cfg} typeofGetUserBudgets=${typeof db.getUserBudgets}`);
+    logger.warn(
+      `[balanceController] cfg=${!!cfg} typeofGetUserBudgets=${typeof db.getUserBudgets}`,
+    );
     if (cfg) {
       modelBudgets = await db.getUserBudgets(req.user.id, cfg);
       logger.warn(`[balanceController] returning ${modelBudgets?.length} budgets`);
