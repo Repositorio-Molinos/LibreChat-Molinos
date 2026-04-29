@@ -9,6 +9,7 @@ interface ConvoLinkProps {
   isSmallScreen: boolean;
   localize: (key: any, options?: any) => string;
   children: React.ReactNode;
+  timestamp?: string;
 }
 
 const ConvoLink: React.FC<ConvoLinkProps> = ({
@@ -19,21 +20,18 @@ const ConvoLink: React.FC<ConvoLinkProps> = ({
   isSmallScreen,
   localize,
   children,
+  timestamp,
 }) => {
   return (
     <div
-      className={cn(
-        'flex grow items-center gap-2 overflow-hidden rounded-lg px-2',
-        isActiveConvo || isPopoverActive ? 'bg-surface-active-alt' : '',
-      )}
+      className={cn('flex grow items-center gap-2 overflow-hidden rounded-lg px-2')}
       title={title ?? undefined}
       aria-current={isActiveConvo ? 'page' : undefined}
       style={{ width: '100%' }}
     >
       {children}
       <div
-        className="relative flex-1 grow overflow-hidden whitespace-nowrap"
-        style={{ textOverflow: 'clip' }}
+        className="relative flex flex-1 grow flex-col overflow-hidden"
         onDoubleClick={(e) => {
           if (isSmallScreen) {
             return;
@@ -44,7 +42,10 @@ const ConvoLink: React.FC<ConvoLinkProps> = ({
         }}
         aria-label={title || localize('com_ui_untitled')}
       >
-        {title || localize('com_ui_untitled')}
+        <span className="overflow-hidden whitespace-nowrap" style={{ textOverflow: 'ellipsis' }}>
+          {title || localize('com_ui_untitled')}
+        </span>
+        {timestamp ? <span data-brand-convo-time>{timestamp}</span> : null}
       </div>
       <div
         className={cn(

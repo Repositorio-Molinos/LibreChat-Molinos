@@ -44,6 +44,7 @@ import {
 } from './tx';
 import { createTransactionMethods, type TransactionMethods } from './transaction';
 import { createSpendTokensMethods, type SpendTokensMethods } from './spendTokens';
+import { createModelBudgetMethods, type ModelBudgetMethods } from './modelBudget';
 import { createPromptMethods, type PromptMethods, type PromptDeps } from './prompt';
 /* Tier 5 — Agent */
 import { createAgentMethods, type AgentMethods, type AgentDeps } from './agent';
@@ -84,7 +85,8 @@ export type AllMethods = UserMethods &
   SpendTokensMethods &
   PromptMethods &
   AgentMethods &
-  ConfigMethods;
+  ConfigMethods &
+  ModelBudgetMethods;
 
 /** Dependencies injected from the api layer into createMethods */
 export interface CreateMethodsDeps {
@@ -123,10 +125,15 @@ export function createMethods(
     getCacheMultiplier: txMethods.getCacheMultiplier,
   });
 
-  // Tier 3: spendTokens methods need transaction methods
+  // Per-user, per-model bucket budgets — runs alongside the global Balance.
+  const modelBudgetMethods = createModelBudgetMethods(mongoose);
+
+  // Tier 3: spendTokens methods need transaction methods + (optional) modelBudget hook.
   const spendTokensMethods = createSpendTokensMethods(mongoose, {
     createTransaction: transactionMethods.createTransaction,
     createStructuredTransaction: transactionMethods.createStructuredTransaction,
+    recordModelBudgetUsage: modelBudgetMethods.recordUsage,
+    getBucketForModel: modelBudgetMethods.getBucketForModel,
   });
 
   const messageMethods = createMessageMethods(mongoose);
@@ -202,6 +209,7 @@ export function createMethods(
     ...txMethods,
     ...transactionMethods,
     ...spendTokensMethods,
+    ...modelBudgetMethods,
     ...promptMethods,
     /* Tier 5 */
     ...agentMethods,

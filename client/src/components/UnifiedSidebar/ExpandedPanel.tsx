@@ -8,6 +8,7 @@ import type { NavLink } from '~/common';
 import { CLOSE_SIDEBAR_ID } from '~/components/Chat/Menus/OpenSidebar';
 import { useActivePanel, resolveActivePanel, DEFAULT_PANEL } from '~/Providers';
 import { useLocalize, useNewConvo } from '~/hooks';
+import { BrandLogo } from '~/brand';
 import { clearMessagesCache, cn } from '~/utils';
 import store from '~/store';
 
@@ -137,25 +138,10 @@ function ExpandedPanel({
   const toggleClick = expanded ? onCollapse : onExpand;
 
   return (
-    <div className="flex h-full flex-shrink-0 flex-col gap-2 border-r border-border-light bg-surface-primary-alt px-2 py-2">
-      <TooltipAnchor
-        side="right"
-        description={localize(toggleLabel)}
-        render={
-          <Button
-            id={expanded ? CLOSE_SIDEBAR_ID : undefined}
-            data-testid={expanded ? 'close-sidebar-button' : 'open-sidebar-button'}
-            size="icon"
-            variant="ghost"
-            aria-label={localize(toggleLabel)}
-            aria-expanded={expanded}
-            className="h-9 w-9 rounded-lg"
-            onClick={toggleClick}
-          >
-            <Sidebar aria-hidden="true" className="h-5 w-5 text-text-primary" />
-          </Button>
-        }
-      />
+    <div className="flex h-full flex-shrink-0 flex-col gap-2 border-r border-border-light bg-surface-primary-alt px-2.5 py-3">
+      <div className="flex items-center justify-center pb-1">
+        <BrandLogo />
+      </div>
       <NewChatButton setActive={setActive} />
       <div className="mx-2 border-b border-border-light" />
       <div className="flex flex-col gap-1 overflow-y-auto">
@@ -172,8 +158,26 @@ function ExpandedPanel({
         ))}
       </div>
 
-      <div className="mt-auto">
-        <Suspense fallback={<Skeleton className="h-9 w-9 rounded-lg" />}>
+      <div className="mt-auto flex flex-col items-center gap-2">
+        <TooltipAnchor
+          side="right"
+          description={localize(toggleLabel)}
+          render={
+            <Button
+              id={expanded ? CLOSE_SIDEBAR_ID : undefined}
+              data-testid={expanded ? 'close-sidebar-button' : 'open-sidebar-button'}
+              size="icon"
+              variant="ghost"
+              aria-label={localize(toggleLabel)}
+              aria-expanded={expanded}
+              className="h-10 w-10 rounded-xl"
+              onClick={toggleClick}
+            >
+              <Sidebar aria-hidden="true" className="h-5 w-5 text-text-primary" />
+            </Button>
+          }
+        />
+        <Suspense fallback={<Skeleton className="h-10 w-10 rounded-xl" />}>
           <AccountSettings collapsed />
         </Suspense>
       </div>

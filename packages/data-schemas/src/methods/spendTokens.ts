@@ -1,5 +1,9 @@
 import logger from '~/config/winston';
 import type { TxData, TransactionResult } from './transaction';
+import type {
+  ModelBudgetBucketConfig,
+  ModelBudgetsRuntimeConfig,
+} from '~/types';
 
 /** Base transaction context passed by callers — does not include fields added internally */
 export interface SpendTxData {
@@ -11,15 +15,54 @@ export interface SpendTxData {
   balance?: { enabled?: boolean };
   transactions?: { enabled?: boolean };
   valueKey?: string;
+  /** Per-request snapshot of the modelBudgets yaml config. Caller passes it
+   *  through so spendTokens can record the cost in the right bucket without
+   *  reaching into the request context. */
+  modelBudgets?: ModelBudgetsRuntimeConfig | null;
+}
+
+export interface SpendTokensDeps {
+  createTransaction: (txData: TxData) => Promise<TransactionResult | undefined>;
+  createStructuredTransaction: (txData: TxData) => Promise<TransactionResult | undefined>;
+  /** Optional hook — when provided, spendTokens records the per-bucket cost
+   *  alongside the global Balance update. */
+  recordModelBudgetUsage?: (
+    userId: string | import('mongoose').Types.ObjectId,
+    bucket: ModelBudgetBucketConfig,
+    config: ModelBudgetsRuntimeConfig,
+    credits: number,
+  ) => Promise<unknown>;
+  getBucketForModel?: (
+    model: string | undefined,
+    buckets: ModelBudgetBucketConfig[] | undefined,
+  ) => ModelBudgetBucketConfig | null;
 }
 
 export function createSpendTokensMethods(
   _mongoose: typeof import('mongoose'),
-  transactionMethods: {
-    createTransaction: (txData: TxData) => Promise<TransactionResult | undefined>;
-    createStructuredTransaction: (txData: TxData) => Promise<TransactionResult | undefined>;
-  },
+  transactionMethods: SpendTokensDeps,
 ) {
+  function maybeRecordModelBudget(
+    txData: SpendTxData,
+    results: Array<TransactionResult | undefined>,
+  ): Promise<unknown> | void {
+    const cfg = txData.modelBudgets;
+    if (!cfg?.enabled) return;
+    if (!transactionMethods.recordModelBudgetUsage || !transactionMethods.getBucketForModel) return;
+    const bucket = transactionMethods.getBucketForModel(txData.model, cfg.buckets);
+    if (!bucket) return;
+    let credits = 0;
+    for (const r of results) {
+      if (!r) continue;
+      const v = (r.prompt ?? r.completion ?? 0) as number;
+      credits += Math.abs(v);
+    }
+    if (credits <= 0) return;
+    return transactionMethods
+      .recordModelBudgetUsage(txData.user, bucket, cfg, credits)
+      .catch((err) => logger.error('[spendTokens] modelBudget recordUsage failed', err));
+  }
+
   /**
    * Creates up to two transactions to record the spending of tokens.
    */
@@ -67,6 +110,7 @@ export function createSpendTokensMethods(
       } else {
         logger.debug('[spendTokens] No transactions incurred against balance');
       }
+      await maybeRecordModelBudget(txData, [prompt, completion]);
     } catch (err) {
       logger.error('[spendTokens]', err);
     }
@@ -132,6 +176,7 @@ export function createSpendTokensMethods(
       } else {
         logger.debug('[spendStructuredTokens] No transactions incurred against balance');
       }
+      await maybeRecordModelBudget(txData, [prompt, completion]);
     } catch (err) {
       logger.error('[spendStructuredTokens]', err);
     }

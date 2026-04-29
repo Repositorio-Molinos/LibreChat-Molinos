@@ -55,6 +55,8 @@ export interface PreparedEntry {
   doc: TransactionData;
   tokenValue: number;
   balance?: Partial<TCustomConfig['balance']> | null;
+  model?: string;
+  modelBudgets?: import('librechat-data-provider').TModelBudgetsConfig | null;
 }
 
 export interface TokenUsage {
@@ -82,11 +84,27 @@ export interface TxMetadata {
   balance?: Partial<TCustomConfig['balance']> | null;
   transactions?: Partial<TTransactionsConfig>;
   endpointTokenConfig?: EndpointTokenConfig;
+  /** Per-user, per-model bucket budgets — populated from `appConfig.modelBudgets`
+   *  when the feature is enabled. Passed through to spendTokens so the cost is
+   *  recorded in the right bucket on top of the global Balance. */
+  modelBudgets?: import('librechat-data-provider').TModelBudgetsConfig | null;
 }
 
 export interface BulkWriteDeps {
   insertMany: (docs: TransactionData[]) => Promise<unknown>;
   updateBalance: (params: { user: string; incrementValue: number }) => Promise<unknown>;
+  /** Optional: when provided, bulkWriteTransactions records the cost into the
+   *  matching per-model bucket budget alongside the global Balance update. */
+  recordModelBudgetUsage?: (
+    userId: string,
+    bucket: import('librechat-data-provider').TModelBudgetBucket,
+    config: import('librechat-data-provider').TModelBudgetsConfig,
+    credits: number,
+  ) => Promise<unknown>;
+  getBucketForModel?: (
+    model: string | undefined,
+    buckets: import('librechat-data-provider').TModelBudgetBucket[] | undefined,
+  ) => import('librechat-data-provider').TModelBudgetBucket | null;
 }
 
 function calculateTokenValue(
@@ -179,10 +197,11 @@ function prepareStandardTx(
   _txData: StandardTxData & {
     balance?: Partial<TCustomConfig['balance']> | null;
     transactions?: Partial<TTransactionsConfig>;
+    modelBudgets?: import('librechat-data-provider').TModelBudgetsConfig | null;
   },
   pricing: PricingFns,
 ): PreparedEntry | null {
-  const { balance, transactions, ...txData } = _txData;
+  const { balance, transactions, modelBudgets, ...txData } = _txData;
   if (txData.rawAmount != null && isNaN(txData.rawAmount)) {
     return null;
   }
@@ -195,6 +214,8 @@ function prepareStandardTx(
     doc: { ...txData, tokenValue, rate },
     tokenValue,
     balance,
+    model: txData.model,
+    modelBudgets,
   };
 }
 
@@ -202,10 +223,11 @@ function prepareStructuredTx(
   _txData: StructuredTxData & {
     balance?: Partial<TCustomConfig['balance']> | null;
     transactions?: Partial<TTransactionsConfig>;
+    modelBudgets?: import('librechat-data-provider').TModelBudgetsConfig | null;
   },
   pricing: PricingFns,
 ): PreparedEntry | null {
-  const { balance, transactions, ...txData } = _txData;
+  const { balance, transactions, modelBudgets, ...txData } = _txData;
   if (transactions?.enabled === false) {
     return null;
   }
@@ -224,6 +246,8 @@ function prepareStructuredTx(
     },
     tokenValue,
     balance,
+    model: txData.model,
+    modelBudgets,
   };
 }
 
@@ -331,10 +355,34 @@ export async function bulkWriteTransactions(
 
   let totalTokenValue = 0;
   let balanceEnabled = false;
-  const plainDocs = docs.map(({ doc, tokenValue, balance }) => {
+  /** Per-bucket sum so we deduct each model bucket exactly once for the call. */
+  const budgetSpendByBucketKey = new Map<
+    string,
+    {
+      bucket: import('librechat-data-provider').TModelBudgetBucket;
+      cfg: import('librechat-data-provider').TModelBudgetsConfig;
+      credits: number;
+    }
+  >();
+
+  const plainDocs = docs.map(({ doc, tokenValue, balance, model, modelBudgets }) => {
     if (balance?.enabled) {
       balanceEnabled = true;
       totalTokenValue += tokenValue;
+    }
+    if (modelBudgets?.enabled && dbOps.getBucketForModel && dbOps.recordModelBudgetUsage) {
+      const bucket = dbOps.getBucketForModel(model, modelBudgets.buckets);
+      if (bucket) {
+        const credits = Math.abs(tokenValue);
+        if (credits > 0) {
+          const existing = budgetSpendByBucketKey.get(bucket.key);
+          if (existing) {
+            existing.credits += credits;
+          } else {
+            budgetSpendByBucketKey.set(bucket.key, { bucket, cfg: modelBudgets, credits });
+          }
+        }
+      }
     }
     return doc;
   });
@@ -344,4 +392,12 @@ export async function bulkWriteTransactions(
   }
 
   await dbOps.insertMany(plainDocs);
+
+  if (budgetSpendByBucketKey.size > 0 && dbOps.recordModelBudgetUsage) {
+    await Promise.all(
+      Array.from(budgetSpendByBucketKey.values()).map(({ bucket, cfg, credits }) =>
+        dbOps.recordModelBudgetUsage!(user, bucket, cfg, credits),
+      ),
+    );
+  }
 }

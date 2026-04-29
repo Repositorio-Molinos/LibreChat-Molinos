@@ -97,6 +97,79 @@ function buildSharedPayload() {
     payload.customFooter = process.env.CUSTOM_FOOTER;
   }
 
+  // Optional brand overrides via environment variables. Merged into
+  // payload.interface.brand so the client can read them via
+  // `startupConfig.interface.brand`.
+  const brand = {};
+  if (process.env.BRAND_LOGO_SIDEBAR) {
+    brand.logoSidebar = process.env.BRAND_LOGO_SIDEBAR;
+  }
+  if (process.env.BRAND_LOGOS) {
+    brand.logos = process.env.BRAND_LOGOS.split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  if (process.env.BRAND_BACKGROUND) {
+    brand.background = process.env.BRAND_BACKGROUND;
+  }
+  if (process.env.BRAND_LANDING_IMAGES) {
+    brand.landingImages = process.env.BRAND_LANDING_IMAGES.split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  if (process.env.BRAND_HERO_IMAGE) {
+    brand.heroImage = process.env.BRAND_HERO_IMAGE;
+  }
+  if (Object.keys(brand).length > 0) {
+    payload.interface = payload.interface || {};
+    payload.interface.brand = { ...(payload.interface.brand || {}), ...brand };
+  }
+
+  // Optional interface flag overrides via env vars. Use to disable features
+  // per environment (e.g. INTERFACE_MARKETPLACE=false in k8s) without
+  // editing librechat.yaml.
+  const interfaceOverrides = {};
+  const envFlag = (key) => {
+    const v = process.env[key];
+    if (v === 'true') return true;
+    if (v === 'false') return false;
+    return undefined;
+  };
+  const flagMap = {
+    INTERFACE_MARKETPLACE: 'marketplace',
+    INTERFACE_REMOTE_AGENTS: 'remoteAgents',
+    INTERFACE_PROMPTS: 'prompts',
+    INTERFACE_AGENTS: 'agents',
+    INTERFACE_MCP_SERVERS: 'mcpServers',
+  };
+  for (const [envKey, configKey] of Object.entries(flagMap)) {
+    const v = envFlag(envKey);
+    if (v !== undefined) {
+      interfaceOverrides[configKey] = { use: v };
+    }
+  }
+  const simpleFlags = [
+    'memories',
+    'bookmarks',
+    'webSearch',
+    'runCode',
+    'fileSearch',
+    'fileCitations',
+    'temporaryChat',
+    'multiConvo',
+    'modelSelect',
+    'parameters',
+  ];
+  for (const key of simpleFlags) {
+    const v = envFlag(`INTERFACE_${key.replace(/([A-Z])/g, '_$1').toUpperCase()}`);
+    if (v !== undefined) {
+      interfaceOverrides[key] = v;
+    }
+  }
+  if (Object.keys(interfaceOverrides).length > 0) {
+    payload.interface = { ...(payload.interface || {}), ...interfaceOverrides };
+  }
+
   return payload;
 }
 
@@ -133,7 +206,7 @@ router.get('/', async function (req, res) {
 
       const interfaceConfig = baseConfig?.interfaceConfig;
       if (interfaceConfig?.privacyPolicy || interfaceConfig?.termsOfService) {
-        payload.interface = {};
+        payload.interface = payload.interface || {};
         if (interfaceConfig.privacyPolicy) {
           payload.interface.privacyPolicy = interfaceConfig.privacyPolicy;
         }
@@ -157,7 +230,8 @@ router.get('/', async function (req, res) {
     const payload = {
       ...sharedPayload,
       socialLogins: appConfig?.registration?.socialLogins ?? defaultSocialLogins,
-      interface: appConfig?.interfaceConfig,
+      // Brand env overrides (in sharedPayload.interface) win over yaml interfaceConfig.
+      interface: { ...(appConfig?.interfaceConfig || {}), ...(sharedPayload.interface || {}) },
       turnstile: appConfig?.turnstileConfig,
       modelSpecs: appConfig?.modelSpecs,
       balance: balanceConfig,

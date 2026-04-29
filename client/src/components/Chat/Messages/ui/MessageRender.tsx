@@ -5,7 +5,7 @@ import type { TMessage } from 'librechat-data-provider';
 import type { TMessageProps, TMessageIcon, TMessageChatContext } from '~/common';
 import { cn, getHeaderPrefixForScreenReader, getMessageAriaLabel } from '~/utils';
 import MessageContent from '~/components/Chat/Messages/Content/MessageContent';
-import { useLocalize, useMessageActions, useContentMetadata } from '~/hooks';
+import { useLocalize, useMessageActions, useContentMetadata, useAuthContext } from '~/hooks';
 import PlaceholderRow from '~/components/Chat/Messages/ui/PlaceholderRow';
 import SiblingSwitch from '~/components/Chat/Messages/SiblingSwitch';
 import HoverButtons from '~/components/Chat/Messages/HoverButtons';
@@ -95,6 +95,7 @@ const MessageRender = memo(function MessageRender({
   chatContext,
 }: MessageRenderProps) {
   const localize = useLocalize();
+  const { user } = useAuthContext();
   const {
     ask,
     edit,
@@ -147,6 +148,27 @@ const MessageRender = memo(function MessageRender({
   );
 
   const { hasParallelContent } = useContentMetadata(msg);
+
+  const brandMeta = useMemo(() => {
+    if (!msg) {
+      return '';
+    }
+    const ts = msg.createdAt ?? msg.updatedAt;
+    const time = ts
+      ? new Date(ts).toLocaleTimeString('es-AR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })
+      : '';
+    if (msg.isCreatedByUser === true) {
+      const fullName = (user?.name ?? user?.username ?? '').trim();
+      const firstName = fullName.split(/\s+/)[0] || localize('com_nav_user');
+      return time ? `${firstName} · ${time}` : firstName;
+    }
+    const modelLabel = msg.model ?? conversation?.model ?? messageLabel ?? '';
+    return ['Molinos IA', modelLabel, time].filter(Boolean).join(' · ');
+  }, [msg, user, conversation?.model, messageLabel, localize]);
   const messageId = msg?.messageId ?? '';
   const messageContextValue = useMemo(
     () => ({
@@ -211,7 +233,7 @@ const MessageRender = memo(function MessageRender({
         {!hasParallelContent && (
           <h2 className={cn('select-none font-semibold', fontSize)}>
             <span className="sr-only">{getHeaderPrefixForScreenReader(msg, localize)}</span>
-            {messageLabel}
+            {brandMeta || messageLabel}
           </h2>
         )}
 

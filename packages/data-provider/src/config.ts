@@ -996,6 +996,28 @@ export const transactionsSchema = z.object({
   enabled: z.boolean().optional().default(true),
 });
 
+/** Per-user, per-model bucket budgets — Molinos custom layer over the global
+ *  `balance` system. Each bucket maps any model whose name contains one of the
+ *  `match` substrings to a USD allocation that resets on a rolling period. */
+export const modelBudgetBucketSchema = z.object({
+  key: z.string().min(1),
+  label: z.string().optional(),
+  match: z.array(z.string().min(1)).min(1),
+  defaultUsd: z.number().nonnegative().default(0),
+});
+
+export const modelBudgetsSchema = z.object({
+  enabled: z.boolean().default(false),
+  /** Period length in milliseconds (default = 30 days). Set to 604_800_000 for weekly. */
+  periodMs: z.number().int().positive().default(2_592_000_000),
+  /** When true, requests for a model that doesn't match any bucket are rejected with 402. */
+  rejectUnmatchedModel: z.boolean().default(true),
+  buckets: z.array(modelBudgetBucketSchema).default([]),
+});
+
+export type TModelBudgetBucket = z.infer<typeof modelBudgetBucketSchema>;
+export type TModelBudgetsConfig = z.infer<typeof modelBudgetsSchema>;
+
 export const memorySchema = z.object({
   disabled: z.boolean().optional(),
   validKeys: z.array(z.string()).optional(),
@@ -1093,6 +1115,7 @@ export const configSchema = z.object({
     })
     .default({ socialLogins: defaultSocialLogins }),
   balance: balanceSchema.optional(),
+  modelBudgets: modelBudgetsSchema.optional(),
   transactions: transactionsSchema.optional(),
   speech: z
     .object({

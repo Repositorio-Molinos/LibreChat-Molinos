@@ -269,6 +269,7 @@ describe('AgentClient - titleConvo', () => {
         transactions: {
           enabled: true,
         },
+        modelBudgets: null,
         messageId: 'response-123',
       });
     });

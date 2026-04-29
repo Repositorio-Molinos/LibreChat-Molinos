@@ -13,7 +13,7 @@ import Sidebar from './Sidebar';
 import { cn } from '~/utils';
 import store from '~/store';
 
-const COLLAPSED_WIDTH = 52;
+const COLLAPSED_WIDTH = 60;
 const EXPANDED_MIN = 360;
 const TRANSITION_MS = 300;
 const EASING = 'cubic-bezier(0.2, 0, 0, 1)';
@@ -136,6 +136,7 @@ function UnifiedSidebar() {
     return (
       <>
         <div
+          data-brand-zone="sidebar"
           className={cn(
             'fixed left-0 top-0 z-[110] flex h-full bg-surface-primary-alt',
             expanded ? 'translate-x-0' : '-translate-x-full',
@@ -178,6 +179,7 @@ function UnifiedSidebar() {
     <SidebarChatProvider>
       <ActivePanelProvider>
         <aside
+          data-brand-zone="sidebar"
           className="relative flex h-full flex-shrink-0 overflow-hidden"
           style={{
             width: expanded ? sidebarWidth : COLLAPSED_WIDTH,

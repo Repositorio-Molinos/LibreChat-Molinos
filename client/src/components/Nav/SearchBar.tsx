@@ -11,6 +11,7 @@ import store from '~/store';
 
 type SearchBarProps = {
   isSmallScreen?: boolean;
+  placeholder?: string;
 };
 
 const SearchBar = forwardRef((props: SearchBarProps, ref: React.Ref<HTMLDivElement>) => {
@@ -18,7 +19,8 @@ const SearchBar = forwardRef((props: SearchBarProps, ref: React.Ref<HTMLDivEleme
   const location = useLocation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { isSmallScreen } = props;
+  const { isSmallScreen, placeholder } = props;
+  const placeholderText = placeholder ?? localize('com_nav_search_placeholder');
 
   const [text, setText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -124,8 +126,8 @@ const SearchBar = forwardRef((props: SearchBarProps, ref: React.Ref<HTMLDivEleme
         onKeyDown={(e) => {
           e.code === 'Space' ? e.stopPropagation() : null;
         }}
-        aria-label={localize('com_nav_search_placeholder')}
-        placeholder={localize('com_nav_search_placeholder')}
+        aria-label={placeholderText}
+        placeholder={placeholderText}
         onKeyUp={handleKeyUp}
         onFocus={() => setSearchState((prev) => ({ ...prev, isSearching: true }))}
         onBlur={() => setSearchState((prev) => ({ ...prev, isSearching: false }))}

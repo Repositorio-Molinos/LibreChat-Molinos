@@ -1,5 +1,5 @@
 import { logger } from '@librechat/data-schemas';
-import type { TCustomConfig, TTransactionsConfig } from 'librechat-data-provider';
+import type { TCustomConfig, TTransactionsConfig, TModelBudgetsConfig } from 'librechat-data-provider';
 import type {
   StructuredTokenUsage,
   BulkWriteDeps,
@@ -39,6 +39,7 @@ export interface RecordUsageParams {
   balance?: Partial<TCustomConfig['balance']> | null;
   transactions?: Partial<TTransactionsConfig>;
   endpointTokenConfig?: EndpointTokenConfig;
+  modelBudgets?: TModelBudgetsConfig | null;
 }
 
 export interface RecordUsageResult {
@@ -63,6 +64,7 @@ export async function recordCollectedUsage(
     balance,
     messageId,
     transactions,
+    modelBudgets,
     conversationId,
     collectedUsage,
     endpointTokenConfig,
@@ -123,6 +125,7 @@ export async function recordCollectedUsage(
         balance,
         messageId,
         transactions,
+        modelBudgets,
         conversationId,
         endpointTokenConfig,
         context: usageContext,

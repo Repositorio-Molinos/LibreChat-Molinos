@@ -5,9 +5,8 @@ import { Constants } from 'librechat-data-provider';
 import { useToastContext, useMediaQuery } from '@librechat/client';
 import type { TConversation } from 'librechat-data-provider';
 import { useUpdateConversationMutation } from '~/data-provider';
-import EndpointIcon from '~/components/Endpoints/EndpointIcon';
+import { formatConvoTime } from '~/brand';
 import { useNavigateToConvo, useLocalize, useShiftKey } from '~/hooks';
-import { useGetEndpointsQuery } from '~/data-provider';
 import { NotificationSeverity } from '~/common';
 import { ConvoOptions } from './ConvoOptions';
 import RenameForm from './RenameForm';
@@ -32,13 +31,13 @@ export default function Conversation({
   const localize = useLocalize();
   const { showToast } = useToastContext();
   const { navigateToConvo } = useNavigateToConvo();
-  const { data: endpointsConfig } = useGetEndpointsQuery();
   const currentConvoId = useMemo(() => params.conversationId, [params.conversationId]);
   const updateConvoMutation = useUpdateConversationMutation(currentConvoId ?? '');
   const activeConvos = useRecoilValue(store.allConversationsSelector);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isShiftHeld = useShiftKey();
   const { conversationId, title = '' } = conversation;
+  const brandTimestamp = formatConvoTime(conversation?.updatedAt ?? conversation?.createdAt);
 
   const [titleInput, setTitleInput] = useState(title || '');
   const [renaming, setRenaming] = useState(false);
@@ -234,6 +233,7 @@ export default function Conversation({
           onRename={handleRename}
           isSmallScreen={isSmallScreen}
           localize={localize}
+          timestamp={brandTimestamp}
         >
           {isGenerating ? (
             <svg
@@ -256,14 +256,7 @@ export default function Conversation({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-          ) : (
-            <EndpointIcon
-              conversation={conversation}
-              endpointsConfig={endpointsConfig}
-              size={20}
-              context="menu-item"
-            />
-          )}
+          ) : null}
         </ConvoLink>
       )}
       <div

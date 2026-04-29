@@ -1,0 +1,711 @@
+/* =============================================================
+   Molinos Brand Tokens — single source of truth
+   Imported once from `client/src/style.css`. Maps Molinos design
+   system values into LibreChat's existing semantic CSS vars so we
+   can re-skin without touching upstream component code.
+   ============================================================= */
+
+/* Disable elastic / bounce overscroll on the whole document. */
+html,
+body {
+  overscroll-behavior: none;
+}
+
+:root {
+  /* ---- Molinos brand palette --------------------------------- */
+  --molinos-blue: rgb(34, 64, 154);          /* #22409A — dominant */
+  --molinos-blue-dark: rgb(27, 50, 129);
+  --molinos-blue-darker: rgb(20, 39, 111);
+  --molinos-blue-night: rgb(13, 27, 94);
+
+  --molinos-red: rgb(236, 28, 36);           /* #EC1C24 — CTAs */
+  --molinos-red-dark: rgb(215, 25, 32);
+  --molinos-red-darker: rgb(189, 27, 33);
+
+  --molinos-yellow: rgb(255, 203, 5);
+  --molinos-orange: rgb(211, 65, 42);
+  --molinos-green: rgb(0, 104, 72);
+
+  /* ---- Brand-aligned neutrals (cool undertone) -------------- */
+  --molinos-neutral-50:  #f7f8fb;
+  --molinos-neutral-100: #f1f3f8;
+  --molinos-neutral-200: #e4e7ef;
+  --molinos-neutral-300: #cccfdb;
+  --molinos-neutral-400: #a1a5b0;
+  --molinos-neutral-500: #6b7080;
+  --molinos-neutral-600: #4a4f5e;
+  --molinos-neutral-700: #2e3242;
+  --molinos-neutral-800: #1a1d2b;
+  --molinos-neutral-900: #0f1119;
+
+  /* ---- Brand shape ------------------------------------------ */
+  --brand-radius-pill: 999px;
+  --brand-radius-xl: 28px;
+  --brand-radius-lg: 20px;
+  --brand-radius-md: 14px;
+  --brand-radius-sm: 10px;
+
+  /* ---- Brand shadows (tinted into institutional blue) ------- */
+  --brand-shadow-sm: 0 1px 3px rgba(20, 39, 111, 0.08), 0 1px 2px rgba(20, 39, 111, 0.04);
+  --brand-shadow-md: 0 4px 12px rgba(20, 39, 111, 0.10), 0 2px 4px rgba(20, 39, 111, 0.06);
+  --brand-shadow-lg: 0 12px 28px rgba(20, 39, 111, 0.14), 0 4px 8px rgba(20, 39, 111, 0.06);
+  --brand-shadow-focus: 0 0 0 3px rgba(34, 64, 154, 0.25);
+
+  /* ---- Motion ----------------------------------------------- */
+  --brand-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --brand-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Map LibreChat semantic vars to brand palette --------- */
+  /* Accent / CTA — pisamos a rojo Molinos */
+  --surface-submit: var(--molinos-red);
+  --surface-submit-hover: var(--molinos-red-dark);
+  --ring-primary: var(--molinos-blue);
+
+  /* Text / link tone leans into brand blue */
+  --text-link: var(--molinos-blue);
+}
+
+/* ---- DARK MODE — Molinos blue-night palette per handoff ----
+   Override LibreChat's gray-based dark surfaces with a deep
+   institutional blue stack. */
+html.dark {
+  /* Brand blue-night canvas */
+  --presentation:                var(--molinos-blue-night);   /* #0D1B5E */
+  --surface-chat:                var(--molinos-blue-night);
+  --surface-primary:             #0a1448;                     /* canvas */
+  --surface-primary-alt:         #081039;                     /* sidebar shade */
+  --surface-primary-contrast:    #0a1448;
+  --surface-secondary:           #0f1d56;
+  --surface-secondary-alt:       #0f1d56;
+  --surface-tertiary:            #142567;
+  --surface-tertiary-alt:        #142567;
+  --surface-dialog:              #0f1d56;
+
+  /* Hover / active layers — translucent whites over the blue */
+  --surface-hover:               rgba(255, 255, 255, 0.06);
+  --surface-hover-alt:           rgba(255, 255, 255, 0.10);
+  --surface-active:              rgba(255, 255, 255, 0.10);
+  --surface-active-alt:          rgba(255, 255, 255, 0.14);
+
+  /* Header chrome */
+  --header-primary:              #0a1448;
+  --header-hover:                rgba(255, 255, 255, 0.06);
+  --header-button-hover:         rgba(255, 255, 255, 0.06);
+
+  /* Text + borders aligned with handoff fg-* tokens */
+  --text-primary:                rgba(255, 255, 255, 0.94);
+  --text-secondary:              rgba(255, 255, 255, 0.62);
+  --text-secondary-alt:          rgba(255, 255, 255, 0.55);
+  --text-tertiary:               rgba(255, 255, 255, 0.40);
+  --border-light:                rgba(255, 255, 255, 0.08);
+  --border-medium:               rgba(255, 255, 255, 0.14);
+  --border-medium-alt:           rgba(255, 255, 255, 0.14);
+  --border-heavy:                rgba(255, 255, 255, 0.22);
+
+  /* Submit button stays Molinos red even in dark */
+  --surface-submit:              var(--molinos-red);
+  --surface-submit-hover:        var(--molinos-red-dark);
+
+  /* Tailwind shadcn vars (HSL triplets) — match the deep blue */
+  --background:                  226 60% 16%;   /* ~#142567 */
+  --foreground:                  0 0% 98%;
+  --card:                        226 64% 14%;
+  --card-foreground:             0 0% 98%;
+  --muted:                       226 50% 22%;
+  --muted-foreground:            0 0% 70%;
+  --accent:                      226 50% 22%;
+  --accent-foreground:           0 0% 98%;
+  --border:                      226 30% 28%;
+  --input:                       226 30% 28%;
+}
+
+/* =============================================================
+   Scoped overrides: sidebar = dark institutional blue
+   Activated via `data-brand-zone="sidebar"` on the sidebar root.
+   Keeps LibreChat semantic vars stock everywhere else.
+   ============================================================= */
+
+[data-brand-zone="sidebar"] {
+  /* Subtle elevation — sidebar reads as floating above chat surface */
+  box-shadow: 4px 0 14px -2px rgba(20, 39, 111, 0.18);
+  z-index: 10;
+
+  /* Override surface vars within the sidebar subtree only */
+  --surface-primary-alt: var(--molinos-blue-darker);
+  --surface-primary: var(--molinos-blue-darker);
+}
+/* Dark mode: sidebar drops one stop deeper per handoff (#081039) */
+html.dark [data-brand-zone="sidebar"] {
+  --surface-primary-alt: #081039;
+  --surface-primary: #081039;
+  background-color: #081039;
+}
+[data-brand-zone="sidebar"] {
+  --surface-active-alt: rgba(255, 255, 255, 0.14);
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --surface-hover-alt: rgba(255, 255, 255, 0.10);
+  --text-primary: rgba(255, 255, 255, 0.92);
+  --text-secondary: rgba(255, 255, 255, 0.62);
+  --text-tertiary: rgba(255, 255, 255, 0.40);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-medium-alt: rgba(255, 255, 255, 0.14);
+  --border-heavy: rgba(255, 255, 255, 0.22);
+
+  background-color: var(--molinos-blue-darker);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Sidebar: rounded items per Molinos shape language */
+[data-brand-zone="sidebar"] button,
+[data-brand-zone="sidebar"] a {
+  border-radius: var(--brand-radius-md);
+}
+
+/* Sidebar: rail icons turn white on hover (default is muted) */
+[data-brand-zone="sidebar"] button:hover svg,
+[data-brand-zone="sidebar"] a:hover svg {
+  color: #ffffff;
+}
+[data-brand-zone="sidebar"] button:hover,
+[data-brand-zone="sidebar"] a:hover {
+  color: #ffffff;
+}
+
+/* Sidebar: search bar adopts brand input styling */
+[data-brand-zone="sidebar"] input[type="text"],
+[data-brand-zone="sidebar"] input[type="search"] {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--brand-radius-md);
+}
+[data-brand-zone="sidebar"] input[type="text"]::placeholder,
+[data-brand-zone="sidebar"] input[type="search"]::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+[data-brand-zone="sidebar"] input[type="text"]:focus,
+[data-brand-zone="sidebar"] input[type="search"]:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.30);
+  outline: none;
+}
+
+/* Sidebar: scrollbar tinted for dark surface */
+[data-brand-zone="sidebar"] ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+[data-brand-zone="sidebar"] ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.30);
+}
+
+/* Sidebar: hide per-conversation endpoint icons (mockup uses no icons in chat list) */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] svg.endpoint-icon,
+[data-brand-zone="sidebar"] [data-testid="convo-item"] [data-endpoint-icon] {
+  display: none !important;
+}
+
+/* Sidebar: section labels (Hoy / Esta semana / Anteriores) */
+[data-brand-zone="sidebar"] .convo-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 12px 12px 6px;
+}
+
+/* Brand chat-row timestamp below title — tight stacking */
+[data-brand-zone="sidebar"] [data-brand-convo-time] {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-top: 1px;
+}
+
+/* Chat row: taller, breathable padding, gap between rows, no internal box border */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] {
+  height: auto !important;
+  min-height: 52px;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  border-radius: var(--brand-radius-md);
+  border: 0;
+}
+/* Kill the absolute pseudo-element accent (was 2px straight bar) */
+[data-brand-zone="sidebar"] [data-testid="convo-item"]::before {
+  display: none !important;
+  content: none !important;
+}
+/* Active row: solid border-left in Molinos red — follows the row's rounded corners */
+[data-brand-zone="sidebar"] [data-testid="convo-item"].bg-surface-active-alt {
+  border-left: 3px solid var(--molinos-red);
+  padding-left: 7px;
+}
+
+/* Active row — single highlight only (kill any inner bg-surface-active-alt) */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] .bg-surface-active-alt {
+  background-color: transparent !important;
+}
+
+/* Kill the title-fade gradient overlay — it draws a second rounded box
+   on hover/active that doesn't quite match the row outline. */
+[data-brand-zone="sidebar"] [data-testid="convo-item"] [class*="bg-gradient-to-l"] {
+  display: none !important;
+}
+
+/* Date group label (Hoy / Últimos 7 días / Anteriores) — extra top breathing */
+[data-brand-zone="sidebar"] h2.text-text-secondary {
+  margin-top: 18px !important;
+  padding-top: 6px !important;
+  padding-bottom: 4px;
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+[data-brand-zone="sidebar"] h2.text-text-secondary.mt-0 {
+  margin-top: 4px !important;
+}
+
+/* Hide collapsible Chats header row inside the chats pane (no point: already in chats submenu) */
+[data-brand-zone="sidebar"] [data-chats-header] {
+  display: none !important;
+}
+
+/* ============================================================
+   Pane header (Conversaciones + Nuevo CTA)
+   ============================================================ */
+[data-brand-zone="sidebar"] [data-brand-pane-header] h3 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+[data-brand-zone="sidebar"] [data-brand-pane-cta] {
+  background-color: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.95);
+}
+[data-brand-zone="sidebar"] [data-brand-pane-cta]:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Pane search row — handoff spec: single bar, transparent border default,
+   subtle border-only on focus, no box-shadow ring. */
+[data-brand-zone="sidebar"] [data-brand-pane-search] > div {
+  position: relative;
+  width: 100%;
+  height: 36px !important;
+  border-radius: 10px !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  cursor: text !important;
+  transition: background-color 120ms var(--brand-ease-soft),
+              border-color 120ms var(--brand-ease-soft);
+}
+/* Input fills the full clickable area so click anywhere focuses it */
+[data-brand-zone="sidebar"] [data-brand-pane-search] input {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 12px 0 32px !important;
+  margin: 0 !important;
+}
+/* Disable hover effect — only active/focus changes appearance */
+[data-brand-zone="sidebar"] [data-brand-pane-search] > div:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: transparent !important;
+}
+/* Active (focus-within) — handoff: brighter bg + subtle border, no outer ring */
+[data-brand-zone="sidebar"] [data-brand-pane-search] > div:focus-within {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+[data-brand-zone="sidebar"] [data-brand-pane-search] input {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.95);
+}
+[data-brand-zone="sidebar"] [data-brand-pane-search] input::placeholder {
+  color: rgba(255, 255, 255, 0.50);
+}
+/* Kill any inner focus ring / outline / box-shadow on the input or icon
+   so only the outer container shows the focus state. */
+[data-brand-zone="sidebar"] [data-brand-pane-search] input,
+[data-brand-zone="sidebar"] [data-brand-pane-search] input:focus,
+[data-brand-zone="sidebar"] [data-brand-pane-search] input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+/* X clear button: don't render the round slot when it's invisible */
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[aria-label*="clear" i],
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[aria-label*="borrar" i],
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[aria-label*="limpiar" i] {
+  border-radius: var(--brand-radius-sm) !important;
+}
+[data-brand-zone="sidebar"] [data-brand-pane-search] button[disabled] {
+  display: none !important;
+}
+/* Lupa icon: no bg, no ring, just a glyph */
+[data-brand-zone="sidebar"] [data-brand-pane-search] svg {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* ============================================================
+   Rail icon buttons — bigger tap target / breathable padding
+   ============================================================ */
+[data-brand-zone="sidebar"] .h-9.w-9 {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: var(--brand-radius-md) !important;
+}
+
+/* Avatar trigger button — round (no rectangular hover highlight) */
+[data-brand-zone="sidebar"] button:has(.size-8),
+[data-brand-zone="sidebar"] button:has(.size-7) {
+  background: transparent !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+[data-brand-zone="sidebar"] button:has(.size-8):hover,
+[data-brand-zone="sidebar"] button:has(.size-7):hover,
+[data-brand-zone="sidebar"] button:has(.size-8)[aria-expanded="true"],
+[data-brand-zone="sidebar"] button:has(.size-7)[aria-expanded="true"] {
+  background: transparent !important;
+}
+
+
+/* =============================================================
+   Header zone — white surface but brand-tinted controls
+   ============================================================= */
+
+[data-brand-zone="header"] {
+  border-bottom: 1px solid var(--border-subtle, rgba(15, 17, 25, 0.08));
+}
+
+/* =============================================================
+   Chat zone — message bubbles per Molinos handoff
+   Activated via data-brand-zone="chat" on the chat root.
+   ============================================================= */
+
+/* Whole row reverses for user messages so avatar lands on the right */
+[data-brand-zone="chat"] .message-render {
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+[data-brand-zone="chat"] .message-render:has(.user-turn) {
+  flex-direction: row-reverse !important;
+}
+
+/* Avatar slot: 32px circle, brand-colored per author */
+[data-brand-zone="chat"] .message-render > div:first-child > div {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+[data-brand-zone="chat"] .message-render:has(.user-turn) > div:first-child > div {
+  background-color: var(--molinos-blue) !important;
+  color: #fff !important;
+}
+[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div {
+  background-color: var(--molinos-red) !important;
+  color: #fff !important;
+  position: relative;
+  overflow: hidden;
+}
+/* Hide the upstream MessageIcon (Claude logo etc.) and stamp a white "M" instead */
+[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div > * {
+  display: none !important;
+}
+[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div::after {
+  content: "M";
+  display: block;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+/* Body column — limit width, gap, alignment */
+[data-brand-zone="chat"] .user-turn,
+[data-brand-zone="chat"] .agent-turn {
+  max-width: 78% !important;
+  width: auto !important;
+  gap: 6px !important;
+}
+[data-brand-zone="chat"] .user-turn {
+  align-items: flex-end !important;
+}
+[data-brand-zone="chat"] .agent-turn {
+  align-items: flex-start !important;
+}
+
+/* Author label (h2 messageLabel) — restyle as small meta line */
+[data-brand-zone="chat"] .user-turn > h2,
+[data-brand-zone="chat"] .agent-turn > h2 {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--text-tertiary) !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+}
+[data-brand-zone="chat"] .user-turn > h2 {
+  text-align: right !important;
+}
+
+/* Bubble — apply visual to MessageContent's wrapper. */
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow,
+[data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+  padding: 12px 16px;
+  border-radius: 24px;
+  font-size: 15px;
+  line-height: 1.55;
+  box-shadow: var(--brand-shadow-sm);
+}
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow {
+  background-color: var(--molinos-blue);
+  color: #fff;
+  border-bottom-right-radius: 8px;
+}
+[data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-bottom-left-radius: 8px;
+}
+.dark [data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+/* Code/links/text inside user bubble inherit white */
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow *,
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow code {
+  color: #fff !important;
+}
+[data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow code {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Action icon buttons in chat (hover row + composer attach/voice/etc.)
+   Subtle gray default → primary on hover. */
+[data-brand-zone="chat"] button > svg,
+[data-brand-zone="chat"] [role="button"] > svg {
+  color: rgba(15, 17, 25, 0.42);
+  transition: color 120ms var(--brand-ease-soft);
+}
+[data-brand-zone="chat"] button:hover > svg,
+[data-brand-zone="chat"] [role="button"]:hover > svg {
+  color: rgba(15, 17, 25, 0.85);
+}
+.dark [data-brand-zone="chat"] button > svg,
+.dark [data-brand-zone="chat"] [role="button"] > svg {
+  color: rgba(255, 255, 255, 0.45);
+}
+.dark [data-brand-zone="chat"] button:hover > svg,
+.dark [data-brand-zone="chat"] [role="button"]:hover > svg {
+  color: rgba(255, 255, 255, 0.90);
+}
+/* Don't soften CTA buttons (submit / send) — they keep brand red */
+[data-brand-zone="chat"] button[type="submit"] > svg,
+[data-brand-zone="chat"] button[data-brand-cta="true"] > svg {
+  color: #fff !important;
+}
+/* Avatar svgs are intentionally hidden by other rules — don't fight them */
+[data-brand-zone="chat"] .message-render > div:first-child > div > svg {
+  color: inherit;
+}
+
+/* Hover actions row (SubRow) — visible only on hover */
+[data-brand-zone="chat"] .message-render > div:last-child > div > div:last-child {
+  opacity: 0;
+  transition: opacity 120ms var(--brand-ease-soft);
+}
+[data-brand-zone="chat"] .message-render:hover > div:last-child > div > div:last-child,
+[data-brand-zone="chat"] .message-render:focus-within > div:last-child > div > div:last-child {
+  opacity: 1;
+}
+
+/* ============================================================
+   Chatbox (composer) — slightly narrower, more inner padding,
+   subtle translucent surface in dark mode.
+   ============================================================ */
+[data-brand-zone="chat"] form {
+  margin-bottom: 8px !important;
+}
+/* Narrower max width than upstream md:max-w-3xl xl:max-w-4xl */
+@media (min-width: 768px) {
+  [data-brand-zone="chat"] form {
+    max-width: 720px !important;
+  }
+}
+@media (min-width: 1280px) {
+  [data-brand-zone="chat"] form {
+    max-width: 760px !important;
+  }
+}
+/* Chatbox container — extra inner padding, brand radius */
+[data-brand-zone="chat"] form .bg-surface-chat {
+  padding-bottom: 10px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-radius: 24px !important;
+}
+/* Dark mode: chatbox surface = subtle translucent white over the deep blue */
+html.dark [data-brand-zone="chat"] form .bg-surface-chat {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Footer — sit BELOW the chatbox (not absolute overlapping it).
+   Upstream renders the footer with `absolute bottom-0` which makes it
+   overlap the chatbox after our composer margin tweaks. Force it back
+   into normal flow and trim spacing. */
+[data-brand-zone="chat"] [role="contentinfo"] {
+  position: static !important;
+  display: flex !important;
+  padding-top: 6px !important;
+  padding-bottom: 8px !important;
+  font-size: 11px !important;
+  color: var(--text-tertiary) !important;
+}
+
+/* =============================================================
+   Responsive — adapts visual density and hides decorative
+   elements at narrower viewports.
+   Breakpoints:
+     • <640px  (mobile, drawer sidebar)
+     • 640–1024px (narrow desktop / tablet, browser at ~50%)
+     • ≥1024px (full desktop)
+   ============================================================= */
+
+/* Decorative player image — hide below 1024px so it doesn't crowd the chat */
+@media (max-width: 1023px) {
+  [data-brand-floater] {
+    display: none !important;
+  }
+}
+
+/* Composer — at narrow widths, fill available area */
+@media (max-width: 1023px) {
+  [data-brand-zone="chat"] form {
+    max-width: 100% !important;
+    margin-bottom: 6px !important;
+  }
+}
+/* Mobile: shrink composer with side padding so it doesn't span edge-to-edge */
+@media (max-width: 640px) {
+  [data-brand-zone="chat"] form {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  [data-brand-zone="chat"] form .bg-surface-chat {
+    border-radius: 18px !important;
+  }
+}
+
+/* Chat bubbles — give them more horizontal room when chat area is narrow */
+@media (max-width: 1023px) {
+  [data-brand-zone="chat"] .user-turn,
+  [data-brand-zone="chat"] .agent-turn {
+    max-width: 88% !important;
+  }
+}
+@media (max-width: 640px) {
+  [data-brand-zone="chat"] .user-turn,
+  [data-brand-zone="chat"] .agent-turn {
+    max-width: 92% !important;
+  }
+  /* Smaller meta + bubble padding on phones */
+  [data-brand-zone="chat"] .user-turn > h2,
+  [data-brand-zone="chat"] .agent-turn > h2 {
+    font-size: 10px !important;
+  }
+  [data-brand-zone="chat"] .user-turn .flex.min-h-\[20px\].flex-grow,
+  [data-brand-zone="chat"] .agent-turn .flex.min-h-\[20px\].flex-grow {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  /* Compact avatar on phones */
+  [data-brand-zone="chat"] .message-render > div:first-child > div {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px;
+  }
+  [data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div::after {
+    font-size: 14px !important;
+  }
+  /* Tighter row gap for mobile */
+  [data-brand-zone="chat"] .message-render {
+    gap: 8px !important;
+  }
+}
+
+/* Sidebar mobile drawer (rendered by UnifiedSidebar at <768px).
+   Already gets data-brand-zone="sidebar"; ensure inner pane chrome
+   adapts to the narrower drawer width. */
+@media (max-width: 767px) {
+  /* Account-menu chevron / large gaps trim down */
+  [data-brand-zone="sidebar"] .h-9.w-9 {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  /* Pane header & search padding tighten */
+  [data-brand-zone="sidebar"] [data-brand-pane-header] {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+  [data-brand-zone="sidebar"] [data-brand-pane-search] {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+
+/* Header model pill — keep it from overflowing on narrow chat header */
+@media (max-width: 1023px) {
+  [data-brand-zone="chat"] header button[aria-label*="modelo" i],
+  [data-brand-zone="chat"] header button[aria-label*="model" i] {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* =============================================================
+   CTA buttons globally use Molinos red (the only primary CTA)
+   ============================================================= */
+
+button[type="submit"]:not([data-brand-cta="false"]) {
+  background-color: var(--molinos-red);
+  color: #fff;
+  transition: background-color var(--brand-ease-soft) 120ms;
+}
+button[type="submit"]:not([data-brand-cta="false"]):hover {
+  background-color: var(--molinos-red-dark);
+}
+button[type="submit"]:not([data-brand-cta="false"]):active {
+  background-color: var(--molinos-red-darker);
+  transform: scale(0.98);
+}

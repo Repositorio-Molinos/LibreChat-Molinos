@@ -81,6 +81,8 @@ export interface AppConfig {
   turnstileConfig?: Partial<TCustomConfig['turnstile']>;
   /** Balance configuration */
   balance?: Partial<TCustomConfig['balance']>;
+  /** Per-user, per-model bucket budgets configuration (Molinos custom). */
+  modelBudgets?: TCustomConfig['modelBudgets'];
   /** Transactions configuration */
   transactions?: TCustomConfig['transactions'];
   /** Speech configuration */

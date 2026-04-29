@@ -14,6 +14,7 @@ const {
   createSafeUser,
   initializeAgent,
   getBalanceConfig,
+  getModelBudgetsConfig,
   recordCollectedUsage,
   getTransactionsConfig,
   createToolExecuteHandler,
@@ -631,12 +632,18 @@ const createResponse = async (req, res) => {
       // Record token usage against balance
       const balanceConfig = getBalanceConfig(req.config);
       const transactionsConfig = getTransactionsConfig(req.config);
+      const modelBudgetsConfig = getModelBudgetsConfig(req.config);
       recordCollectedUsage(
         {
           spendTokens: db.spendTokens,
           spendStructuredTokens: db.spendStructuredTokens,
           pricing: { getMultiplier: db.getMultiplier, getCacheMultiplier: db.getCacheMultiplier },
-          bulkWriteOps: { insertMany: db.bulkInsertTransactions, updateBalance: db.updateBalance },
+          bulkWriteOps: {
+            insertMany: db.bulkInsertTransactions,
+            updateBalance: db.updateBalance,
+            recordModelBudgetUsage: db.recordUsage,
+            getBucketForModel: db.getBucketForModel,
+          },
         },
         {
           user: userId,
@@ -646,6 +653,7 @@ const createResponse = async (req, res) => {
           messageId: responseId,
           balance: balanceConfig,
           transactions: transactionsConfig,
+          modelBudgets: modelBudgetsConfig,
           model: primaryConfig.model || agent.model_parameters?.model,
         },
       ).catch((err) => {
@@ -796,12 +804,18 @@ const createResponse = async (req, res) => {
       // Record token usage against balance
       const balanceConfig = getBalanceConfig(req.config);
       const transactionsConfig = getTransactionsConfig(req.config);
+      const modelBudgetsConfig = getModelBudgetsConfig(req.config);
       recordCollectedUsage(
         {
           spendTokens: db.spendTokens,
           spendStructuredTokens: db.spendStructuredTokens,
           pricing: { getMultiplier: db.getMultiplier, getCacheMultiplier: db.getCacheMultiplier },
-          bulkWriteOps: { insertMany: db.bulkInsertTransactions, updateBalance: db.updateBalance },
+          bulkWriteOps: {
+            insertMany: db.bulkInsertTransactions,
+            updateBalance: db.updateBalance,
+            recordModelBudgetUsage: db.recordUsage,
+            getBucketForModel: db.getBucketForModel,
+          },
         },
         {
           user: userId,
@@ -811,6 +825,7 @@ const createResponse = async (req, res) => {
           messageId: responseId,
           balance: balanceConfig,
           transactions: transactionsConfig,
+          modelBudgets: modelBudgetsConfig,
           model: primaryConfig.model || agent.model_parameters?.model,
         },
       ).catch((err) => {
