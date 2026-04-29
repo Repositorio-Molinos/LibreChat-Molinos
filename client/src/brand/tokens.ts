@@ -1,16 +1,17 @@
 /**
- * Molinos brand defaults. Values here are the fallback when
- * `startupConfig.interface.brand` is empty. Override per-deployment via
- * BRAND_* env vars in the backend (see api/server/routes/config.js).
+ * Molinos brand asset registry.
  *
- * To revert this fork to vanilla LibreChat visuals, set every default
- * below to `undefined` (or simply delete this file's exports).
+ * Code-driven by design: when marketing delivers an asset (logo, hero, bg),
+ * drop the file under `client/src/brand/assets/`, import it here, and assign
+ * the import to the matching field below. No yaml/config change required.
+ *
+ * Example once an asset arrives:
+ *   import logoSidebarSrc from './assets/logo-molinos.svg';
+ *   export const brandDefaults = { logoSidebar: logoSidebarSrc, ... };
  */
 export const brandDefaults = {
-  logoSidebar: '/assets/logo-molinos-blanco.png' as string | undefined,
-  logos: ['/assets/logo-lucchettineta.png', '/assets/logo-molinos-blanco.png'] as
-    | string[]
-    | undefined,
+  logoSidebar: undefined as string | undefined,
+  logos: undefined as string[] | undefined,
   background: undefined as string | undefined,
   landingImages: undefined as string[] | undefined,
   heroImage: undefined as string | undefined,

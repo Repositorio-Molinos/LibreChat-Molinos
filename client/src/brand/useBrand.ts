@@ -1,18 +1,13 @@
-import { useGetStartupConfig } from '~/data-provider';
 import { brandDefaults, type BrandConfig } from './tokens';
 
 /**
- * Returns the merged brand config: server-provided values from
- * `startupConfig.interface.brand` take precedence over local defaults.
+ * Returns the static brand asset registry (code-driven).
+ *
+ * Single-tenant Molinos build — asset URLs ship inside the bundle, no
+ * server/yaml configuration involved. To update the visuals, edit
+ * `tokens.ts` and rebuild the image. The hook signature is preserved so
+ * consumer components stay agnostic to the source.
  */
 export function useBrand(): BrandConfig {
-  const { data: startupConfig } = useGetStartupConfig();
-  const remote = startupConfig?.interface?.brand ?? {};
-  return {
-    logoSidebar: remote.logoSidebar ?? brandDefaults.logoSidebar,
-    logos: remote.logos ?? brandDefaults.logos,
-    background: remote.background ?? brandDefaults.background,
-    landingImages: remote.landingImages ?? brandDefaults.landingImages,
-    heroImage: remote.heroImage ?? brandDefaults.heroImage,
-  };
+  return brandDefaults;
 }
