@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lowercase image name
+        run: echo "IMAGE=${IMAGE,,}" >> $GITHUB_ENV
+
+      - name: Login a ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Build y push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+    
+  update-gitops:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout repo GitOps
+        uses: actions/checkout@v4
+        with:
+          repository: Repositorio-Molinos/molinos-k8s-calidad
+          ssh-key: ${{ secrets.GITOPS_SSH_KEY }}
+        
+      - name: Instalar yq
+        run: |
+          wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
+      - name: Lowercase image name
+        run: echo "IMAGE=${IMAGE,,}" >> $GITHUB_ENV
+
+      - name: Actualizar tag de imagen en el manifiesto
+        run: |
+          yq e \
+            '.spec.template.spec.containers[0].image = "${{ env.IMAGE }}:${{ github.sha }}"' \
+            -i apps/librechat/librechat-deployment.yaml
+
+      - name: Commit y push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No changes — image tag up to date"
+            exit 0
+          fi
+          git add apps/librechat/librechat-deployment.yaml
+          git commit -m "chore(librechat): update image to ${{ github.sha }}"
+          git pull --rebase
+          git push
