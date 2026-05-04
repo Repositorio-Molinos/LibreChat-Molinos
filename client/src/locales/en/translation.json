@@ -419,6 +419,8 @@
   "com_nav_auto_send_text": "Auto send text",
   "com_nav_auto_transcribe_audio": "Auto transcribe audio",
   "com_nav_automatic_playback": "Autoplay Latest Message",
+  "com_admin_back_to_chat": "Back to chat",
+  "com_admin_subtitle": "Token usage and per-user budgets",
   "com_admin_title": "Admin Panel",
   "com_admin_tab_usage": "Usage",
   "com_admin_tab_users": "Users",

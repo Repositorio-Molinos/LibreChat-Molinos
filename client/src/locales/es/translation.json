@@ -5,6 +5,8 @@
   "com_a11y_end": "La IA ha finalizado su respuesta ",
   "com_a11y_selected": "Seleccionado",
   "com_a11y_start": "La IA ha comenzado su respuesta",
+  "com_admin_back_to_chat": "Volver al chat",
+  "com_admin_subtitle": "Consumo de tokens y presupuestos por usuario",
   "com_admin_budget_allocated_usd": "Asignado (USD)",
   "com_admin_budget_period_until": "Período termina el {{date}}",
   "com_admin_budget_remaining": "Disponible",
