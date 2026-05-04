@@ -437,7 +437,6 @@
   "com_admin_users_col_name": "Name",
   "com_admin_users_col_email": "Email",
   "com_admin_users_col_role": "Role",
-  "com_admin_users_col_provider": "Provider",
   "com_admin_users_col_created": "Created",
   "com_admin_users_col_actions": "Actions",
   "com_admin_users_edit_budget": "Edit budget",

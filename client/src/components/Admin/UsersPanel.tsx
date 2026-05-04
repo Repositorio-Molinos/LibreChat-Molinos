@@ -117,7 +117,6 @@ export default function UsersPanel() {
                 <th className="px-4 py-3 font-medium">{localize('com_admin_users_col_name')}</th>
                 <th className="px-3 py-3 font-medium">{localize('com_admin_users_col_email')}</th>
                 <th className="px-3 py-3 font-medium">{localize('com_admin_users_col_role')}</th>
-                <th className="px-3 py-3 font-medium">{localize('com_admin_users_col_provider')}</th>
                 <th className="px-3 py-3 font-medium">{localize('com_admin_users_col_created')}</th>
                 <th className="px-3 py-3 text-right font-medium">{localize('com_admin_users_col_actions')}</th>
               </tr>
@@ -142,7 +141,6 @@ export default function UsersPanel() {
                   </td>
                   <td className="px-3 py-3 text-text-secondary">{u.email}</td>
                   <td className="px-3 py-3"><RoleBadge role={u.role} /></td>
-                  <td className="px-3 py-3 text-text-tertiary">{u.provider}</td>
                   <td className="px-3 py-3 text-text-tertiary">{shortDate(u.createdAt)}</td>
                   <td className="px-3 py-3 text-right">
                     <Button
@@ -159,7 +157,7 @@ export default function UsersPanel() {
               ))}
               {!isFetching && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12">
+                  <td colSpan={5} className="px-4 py-12">
                     <div className="flex flex-col items-center gap-2 text-text-tertiary">
                       <Inbox className="h-6 w-6" aria-hidden="true" />
                       <span className="text-sm">{localize('com_admin_no_data')}</span>
@@ -169,7 +167,7 @@ export default function UsersPanel() {
               )}
               {isFetching && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12">
+                  <td colSpan={5} className="px-4 py-12">
                     <div className="flex items-center justify-center gap-2 text-text-tertiary">
                       <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                       <span className="text-sm">{localize('com_ui_loading')}</span>
