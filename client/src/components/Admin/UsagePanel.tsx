@@ -124,9 +124,8 @@ export default function UsagePanel() {
         </div>
       )}
 
-      <section className="grid gap-3 sm:grid-cols-4">
+      <section className="grid gap-3 sm:grid-cols-3">
         <Stat label={localize('com_admin_total_spent')} value={formatUsd(data?.totals.spentUsd ?? 0)} />
-        <Stat label={localize('com_admin_total_tx')} value={formatTokens(data?.totals.txCount ?? 0)} />
         <Stat label={localize('com_admin_unique_users')} value={String(data?.totals.uniqueUsers ?? 0)} />
         <Stat label={localize('com_admin_unique_models')} value={String(data?.totals.uniqueModels ?? 0)} />
       </section>
@@ -141,7 +140,6 @@ export default function UsagePanel() {
               <th className="px-3 py-2 text-right">{localize('com_admin_col_cache')}</th>
               <th className="px-3 py-2 text-right">{localize('com_admin_col_total')}</th>
               <th className="px-3 py-2 text-right">{localize('com_admin_col_spent')}</th>
-              <th className="px-3 py-2 text-right">{localize('com_admin_col_tx')}</th>
               <th className="px-3 py-2">{localize('com_admin_col_last')}</th>
             </tr>
           </thead>
@@ -156,13 +154,12 @@ export default function UsagePanel() {
                 <td className="px-3 py-2 text-right tabular-nums">{formatTokens(row.cacheTokens)}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{formatTokens(row.totalTokens)}</td>
                 <td className="px-3 py-2 text-right font-semibold tabular-nums">{formatUsd(row.spentUsd)}</td>
-                <td className="px-3 py-2 text-right tabular-nums">{row.txCount}</td>
                 <td className="px-3 py-2 text-text-tertiary">{shortDate(row.lastAt)}</td>
               </tr>
             ))}
             {!isFetching && filteredRows.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-3 py-8 text-center text-text-tertiary">
+                <td colSpan={7} className="px-3 py-8 text-center text-text-tertiary">
                   {localize('com_admin_no_data')}
                 </td>
               </tr>
