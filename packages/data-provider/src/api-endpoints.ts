@@ -44,6 +44,18 @@ export const user = () => `${BASE_URL}/api/user`;
 
 export const balance = () => `${BASE_URL}/api/balance`;
 
+const adminBase = `${BASE_URL}/api/admin`;
+export const adminUsage = (params: q.AdminUsageParams = {}) =>
+  `${adminBase}/usage${buildQuery(params as Record<string, unknown>)}`;
+export const adminUsersList = (params: q.AdminUsersParams = {}) =>
+  `${adminBase}/users${buildQuery(params as Record<string, unknown>)}`;
+export const adminUsersSearch = (q_: string, limit?: number) =>
+  `${adminBase}/users/search${buildQuery({ q: q_, limit })}`;
+export const adminUserBudgets = (userId: string) =>
+  `${adminBase}/budgets/${encodeURIComponent(userId)}`;
+export const adminSetUserBudget = (userId: string, bucket: string) =>
+  `${adminBase}/budgets/${encodeURIComponent(userId)}/${encodeURIComponent(bucket)}`;
+
 export const userPlugins = () => `${BASE_URL}/api/user/plugins`;
 
 export const deleteUser = () => `${BASE_URL}/api/user/delete`;

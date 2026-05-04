@@ -65,6 +65,11 @@ export enum QueryKeys {
   activeJobs = 'activeJobs',
   /* Agent API Keys */
   agentApiKeys = 'agentApiKeys',
+  /* Admin (Molinos) */
+  adminUsage = 'adminUsage',
+  adminUsers = 'adminUsers',
+  adminUsersSearch = 'adminUsersSearch',
+  adminUserBudgets = 'adminUserBudgets',
 }
 
 // Dynamic query keys that require parameters
@@ -97,4 +102,6 @@ export enum MutationKeys {
   enableTwoFactor = 'enableTwoFactor',
   verifyTwoFactor = 'verifyTwoFactor',
   updateMemoryPreferences = 'updateMemoryPreferences',
+  /* Admin (Molinos) */
+  setAdminUserBudget = 'setAdminUserBudget',
 }
