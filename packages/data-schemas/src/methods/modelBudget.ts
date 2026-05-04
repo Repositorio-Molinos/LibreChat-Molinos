@@ -232,12 +232,53 @@ export function createModelBudgetMethods(mongoose: typeof import('mongoose')) {
     return out;
   }
 
+  /**
+   * Admin override: set `allocatedCredits` and/or reset `spentCredits` for a
+   * specific user/bucket pair. Creates the document if it does not exist yet.
+   *
+   * Inputs are in micro-USD credits to match the storage unit. Caller is
+   * responsible for converting from USD if needed.
+   */
+  async function setUserBudget(
+    userId: Types.ObjectId | string,
+    bucketKey: string,
+    updates: { allocatedCredits?: number; spentCredits?: number },
+    config: ModelBudgetsRuntimeConfig,
+  ): Promise<BudgetSnapshot> {
+    const ModelBudget = mongoose.models.ModelBudget;
+    const bucket = (config.buckets ?? []).find((b) => b.key === bucketKey);
+    if (!bucket) {
+      throw new Error(`Bucket "${bucketKey}" no está definido en modelBudgets.buckets`);
+    }
+
+    const doc = await getOrCreateBudget(userId, bucket, config);
+    const $set: Record<string, number | Date> = {};
+    if (typeof updates.allocatedCredits === 'number' && Number.isFinite(updates.allocatedCredits)) {
+      $set.allocatedCredits = Math.max(0, Math.round(updates.allocatedCredits));
+    }
+    if (typeof updates.spentCredits === 'number' && Number.isFinite(updates.spentCredits)) {
+      $set.spentCredits = Math.max(0, Math.round(updates.spentCredits));
+    }
+    if (Object.keys($set).length === 0) {
+      return snapshot(doc);
+    }
+
+    const updated = (await ModelBudget.findOneAndUpdate(
+      { _id: doc._id },
+      { $set },
+      { new: true },
+    )) as IModelBudget;
+
+    return snapshot(updated);
+  }
+
   return {
     getBucketForModel,
     getOrCreateBudget,
     hasBudget,
     recordUsage,
     getUserBudgets,
+    setUserBudget,
     snapshot,
   };
 }
