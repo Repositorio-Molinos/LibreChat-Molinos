@@ -103,7 +103,6 @@ export default function UsagePanel() {
           icon={<TrendingUp className="h-4 w-4" />}
           label={localize('com_admin_total_spent')}
           value={formatUsd(data?.totals.spentUsd ?? 0)}
-          accent
         />
         <Stat
           icon={<UsersIcon className="h-4 w-4" />}
