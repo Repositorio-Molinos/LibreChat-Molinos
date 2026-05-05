@@ -433,19 +433,7 @@ html.dark [data-brand-zone="sidebar"] {
   position: relative;
   overflow: hidden;
 }
-/* Hide the upstream MessageIcon (Claude logo etc.) and stamp a white "M" instead */
-[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div > * {
-  display: none !important;
-}
-[data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div::after {
-  content: "M";
-  display: block;
-  color: #fff;
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
+/* Agent message avatar styled by MessageEndpointIcon (React) — see MolinosBrandIcon. */
 
 /* Body column — limit width, gap, alignment */
 [data-brand-zone="chat"] .user-turn,

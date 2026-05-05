@@ -14,8 +14,28 @@ import {
   CustomMinimalIcon,
 } from '@librechat/client';
 import UnknownIcon from '~/hooks/Endpoint/UnknownIcon';
+import { useBrand } from '~/brand';
 import { IconProps } from '~/common';
 import { cn } from '~/utils';
+
+const BRAND_NAME = 'Molinos AI';
+
+function MolinosBrandIcon({ src, size }: { src: string; size: number }) {
+  return (
+    <div
+      className="flex items-center justify-center overflow-hidden rounded-full bg-white"
+      style={{ width: size, height: size }}
+    >
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        className="object-contain"
+        style={{ width: size * 0.78, height: size * 0.78 }}
+      />
+    </div>
+  );
+}
 
 type EndpointIcon = {
   icon: React.ReactNode | React.JSX.Element;
@@ -58,6 +78,7 @@ function getGoogleModelName(model: string | null | undefined) {
 
 const MessageEndpointIcon: React.FC<IconProps> = (props) => {
   const { error, iconURL = '', endpoint, size = 30, model = '', assistantName, agentName } = props;
+  const { logoSidebar } = useBrand();
 
   const assistantsIcon = {
     icon: iconURL ? (
@@ -107,6 +128,8 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
           />
         </div>
       </div>
+    ) : logoSidebar ? (
+      <MolinosBrandIcon src={logoSidebar} size={size} />
     ) : (
       <div className="h-6 w-6">
         <div className="shadow-stroke flex h-6 w-6 items-center justify-center overflow-hidden rounded-full">
@@ -114,7 +137,7 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
         </div>
       </div>
     ),
-    name: endpoint,
+    name: agentName || BRAND_NAME,
   };
 
   const endpointIcons: {
@@ -137,16 +160,12 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
       icon: getGoogleIcon(model, size),
       name: getGoogleModelName(model),
     },
-    [EModelEndpoint.anthropic]: {
-      icon: <AnthropicIcon size={size * 0.5555555555555556} />,
-      bg: '#d09a74',
-      name: 'Claude',
-    },
-    [EModelEndpoint.bedrock]: {
-      icon: <BedrockIcon className="icon-xl text-white" />,
-      bg: '#268672',
-      name: alternateName[EModelEndpoint.bedrock],
-    },
+    [EModelEndpoint.anthropic]: logoSidebar
+      ? { icon: <MolinosBrandIcon src={logoSidebar} size={size} />, name: BRAND_NAME }
+      : { icon: <AnthropicIcon size={size * 0.5555555555555556} />, bg: '#d09a74', name: BRAND_NAME },
+    [EModelEndpoint.bedrock]: logoSidebar
+      ? { icon: <MolinosBrandIcon src={logoSidebar} size={size} />, name: BRAND_NAME }
+      : { icon: <BedrockIcon className="icon-xl text-white" />, bg: '#268672', name: BRAND_NAME },
     [EModelEndpoint.custom]: {
       icon: <CustomMinimalIcon size={size * 0.7} />,
       name: 'Custom',
