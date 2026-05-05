@@ -22,18 +22,13 @@ const BRAND_NAME = 'Molinos AI';
 
 function MolinosBrandIcon({ src, size }: { src: string; size: number }) {
   return (
-    <div
-      className="flex items-center justify-center overflow-hidden rounded-full bg-white"
-      style={{ width: size, height: size }}
-    >
-      <img
-        src={src}
-        alt=""
-        aria-hidden="true"
-        className="object-contain"
-        style={{ width: size * 0.78, height: size * 0.78 }}
-      />
-    </div>
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      className="object-contain"
+      style={{ width: size * 0.78, height: size * 0.78 }}
+    />
   );
 }
 

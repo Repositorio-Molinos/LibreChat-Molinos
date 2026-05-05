@@ -428,8 +428,8 @@ html.dark [data-brand-zone="sidebar"] {
   color: #fff !important;
 }
 [data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div {
-  background-color: var(--molinos-red) !important;
-  color: #fff !important;
+  background-color: #fff !important;
+  color: inherit !important;
   position: relative;
   overflow: hidden;
 }
