@@ -426,6 +426,18 @@ html.dark [data-brand-zone="sidebar"] {
 [data-brand-zone="chat"] .message-render:has(.user-turn) > div:first-child > div {
   background-color: var(--molinos-blue) !important;
   color: #fff !important;
+  overflow: hidden;
+}
+/* If the user uploaded an avatar (img present), drop the blue tile so the
+ * picture fills the whole circle instead of sitting inside a blue ring. */
+[data-brand-zone="chat"] .message-render:has(.user-turn) > div:first-child > div:has(img) {
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+[data-brand-zone="chat"] .message-render:has(.user-turn) > div:first-child > div :is(img, svg) {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
 }
 [data-brand-zone="chat"] .message-render:has(.agent-turn) > div:first-child > div {
   background-color: #fff !important;
