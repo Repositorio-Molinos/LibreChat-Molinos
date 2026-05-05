@@ -50,6 +50,9 @@ export default function AdminLayout() {
             <NavLink to="/admin/users" className={tabClass}>
               {localize('com_admin_tab_users')}
             </NavLink>
+            <NavLink to="/admin/audit" className={tabClass}>
+              {localize('com_admin_tab_audit')}
+            </NavLink>
           </nav>
         </header>
         <main className="flex-1 overflow-auto px-6 py-6">

@@ -55,6 +55,8 @@ export const adminUserBudgets = (userId: string) =>
   `${adminBase}/budgets/${encodeURIComponent(userId)}`;
 export const adminSetUserBudget = (userId: string, bucket: string) =>
   `${adminBase}/budgets/${encodeURIComponent(userId)}/${encodeURIComponent(bucket)}`;
+export const adminAudit = (params: q.AdminAuditParams = {}) =>
+  `${adminBase}/audit${buildQuery(params as Record<string, unknown>)}`;
 
 export const userPlugins = () => `${BASE_URL}/api/user/plugins`;
 

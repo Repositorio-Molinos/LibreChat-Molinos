@@ -2,6 +2,7 @@ import { createUserModel } from './user';
 import { createTokenModel } from './token';
 import { createSessionModel } from './session';
 import { createBalanceModel } from './balance';
+import { createAdminAuditLogModel } from './adminAuditLog';
 import { createModelBudgetModel } from './modelBudget';
 import { createConversationModel } from './convo';
 import { createMessageModel } from './message';
@@ -40,6 +41,7 @@ export function createModels(mongoose: typeof import('mongoose')) {
     Session: createSessionModel(mongoose),
     Balance: createBalanceModel(mongoose),
     ModelBudget: createModelBudgetModel(mongoose),
+    AdminAuditLog: createAdminAuditLogModel(mongoose),
     Conversation: createConversationModel(mongoose),
     Message: createMessageModel(mongoose),
     Agent: createAgentModel(mongoose),

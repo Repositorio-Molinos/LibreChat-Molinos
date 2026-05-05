@@ -327,3 +327,39 @@ export interface AdminSetBudgetResponse {
   bucket: string;
   budget: AdminBudgetSnapshot;
 }
+
+export type AdminAuditAction =
+  | 'budget.set_allocation'
+  | 'budget.reset_spent'
+  | 'budget.set_both';
+
+export interface AdminAuditParams {
+  from?: string;
+  to?: string;
+  actorId?: string;
+  targetUserId?: string;
+  action?: AdminAuditAction;
+  limit?: number;
+  offset?: number;
+}
+
+export interface AdminAuditRow {
+  id: string;
+  action: AdminAuditAction;
+  actor: { id: string; email?: string; role?: string };
+  target: { type: 'user'; id: string; email?: string };
+  resource: { type: 'modelBudget'; key: string };
+  before?: { allocatedCredits?: number; spentCredits?: number } | null;
+  after?: { allocatedCredits?: number; spentCredits?: number } | null;
+  context?: { ip?: string; userAgent?: string } | null;
+  createdAt?: string;
+}
+
+export interface AdminAuditResponse {
+  from: string;
+  to: string;
+  rows: AdminAuditRow[];
+  total: number;
+  limit: number;
+  offset: number;
+}

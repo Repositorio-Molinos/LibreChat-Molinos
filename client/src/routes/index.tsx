@@ -39,6 +39,8 @@ const loadAdminUsage = () =>
   import('~/components/Admin').then((m) => ({ Component: m.UsagePanel }));
 const loadAdminUsers = () =>
   import('~/components/Admin').then((m) => ({ Component: m.UsersPanel }));
+const loadAdminAudit = () =>
+  import('~/components/Admin').then((m) => ({ Component: m.AuditPanel }));
 
 const baseEl = document.querySelector('base');
 const baseHref = baseEl?.getAttribute('href') || '/';
@@ -160,6 +162,7 @@ export const router = createBrowserRouter(
             { index: true, element: <Navigate to="/admin/usage" replace={true} /> },
             { path: 'usage', lazy: loadAdminUsage },
             { path: 'users', lazy: loadAdminUsers },
+            { path: 'audit', lazy: loadAdminAudit },
           ],
         },
       ],

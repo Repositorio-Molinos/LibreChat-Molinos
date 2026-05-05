@@ -8,6 +8,8 @@ import type {
   AdminUsersParams,
   AdminUsersResponse,
   AdminUserBudgetsResponse,
+  AdminAuditParams,
+  AdminAuditResponse,
 } from 'librechat-data-provider';
 import store from '~/store';
 
@@ -60,6 +62,24 @@ export const useAdminUserBudgetsQuery = (
       refetchOnReconnect: false,
       ...config,
       enabled: (config?.enabled ?? true) === true && queriesEnabled && !!userId,
+    },
+  );
+};
+
+export const useAdminAuditQuery = (
+  params: AdminAuditParams = {},
+  config?: UseQueryOptions<AdminAuditResponse>,
+): QueryObserverResult<AdminAuditResponse> => {
+  const queriesEnabled = useRecoilValue<boolean>(store.queriesEnabled);
+  return useQuery<AdminAuditResponse>(
+    [QueryKeys.adminAudit, params],
+    () => dataService.getAdminAudit(params),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      keepPreviousData: true,
+      ...config,
+      enabled: (config?.enabled ?? true) === true && queriesEnabled,
     },
   );
 };

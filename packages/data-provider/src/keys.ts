@@ -70,6 +70,7 @@ export enum QueryKeys {
   adminUsers = 'adminUsers',
   adminUsersSearch = 'adminUsersSearch',
   adminUserBudgets = 'adminUserBudgets',
+  adminAudit = 'adminAudit',
 }
 
 // Dynamic query keys that require parameters

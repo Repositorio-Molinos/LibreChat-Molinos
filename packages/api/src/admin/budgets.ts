@@ -6,6 +6,25 @@ import type { ServerRequest } from '~/types/http';
 
 const CREDITS_PER_USD = 1_000_000;
 
+export type BudgetSnapshotLike = {
+  bucket?: string;
+  allocatedCredits?: number;
+  spentCredits?: number;
+  [key: string]: unknown;
+};
+
+export type AuditAction = 'budget.set_allocation' | 'budget.reset_spent' | 'budget.set_both';
+
+export interface AuditEntry {
+  actor: { id: string; email?: string; role?: string };
+  action: AuditAction;
+  target: { type: 'user'; id: string; email?: string };
+  resource: { type: 'modelBudget'; key: string };
+  before?: { allocatedCredits?: number; spentCredits?: number } | null;
+  after?: { allocatedCredits?: number; spentCredits?: number } | null;
+  context?: { ip?: string; userAgent?: string } | null;
+}
+
 export interface AdminBudgetsDeps {
   /** Returns the runtime modelBudgets config for the request, or null when disabled. */
   getConfig: (req: ServerRequest) => TModelBudgetsConfig | null;
@@ -13,14 +32,18 @@ export interface AdminBudgetsDeps {
   getUserBudgets: (
     userId: string,
     config: TModelBudgetsConfig,
-  ) => Promise<Array<Record<string, unknown>>>;
+  ) => Promise<BudgetSnapshotLike[]>;
   /** Atomic admin override of allocated/spent credits for a user/bucket pair. */
   setUserBudget: (
     userId: string,
     bucketKey: string,
     updates: { allocatedCredits?: number; spentCredits?: number },
     config: TModelBudgetsConfig,
-  ) => Promise<Record<string, unknown>>;
+  ) => Promise<BudgetSnapshotLike>;
+  /** Optional: lookup target user's email for audit context. */
+  findUserEmail?: (userId: string) => Promise<string | undefined>;
+  /** Optional: append-only audit recorder. Called best-effort after a successful mutation. */
+  recordAudit?: (entry: AuditEntry) => Promise<void>;
 }
 
 function isValidUserId(id: string | undefined): id is string {
@@ -34,8 +57,19 @@ function parseCreditAmount(value: unknown, unit: 'credits' | 'usd'): number | un
   return unit === 'usd' ? Math.round(n * CREDITS_PER_USD) : Math.round(n);
 }
 
+function pickAuditAction(
+  hasAlloc: boolean,
+  hasSpent: boolean,
+  spentValue: number | undefined,
+): AuditAction {
+  if (hasAlloc && hasSpent) return 'budget.set_both';
+  if (hasAlloc) return 'budget.set_allocation';
+  if (hasSpent && spentValue === 0) return 'budget.reset_spent';
+  return 'budget.set_both';
+}
+
 export function createAdminBudgetsHandlers(deps: AdminBudgetsDeps) {
-  const { getConfig, getUserBudgets, setUserBudget } = deps;
+  const { getConfig, getUserBudgets, setUserBudget, findUserEmail, recordAudit } = deps;
 
   function ensureConfigOr404(req: ServerRequest, res: Response): TModelBudgetsConfig | null {
     const config = getConfig(req);
@@ -100,12 +134,72 @@ export function createAdminBudgetsHandlers(deps: AdminBudgetsDeps) {
         return res.status(404).json({ error: `Bucket "${bucketKey}" not defined in config` });
       }
 
+      let beforeSnap: BudgetSnapshotLike | undefined;
+      if (recordAudit) {
+        try {
+          const all = await getUserBudgets(userId, config);
+          beforeSnap = all.find((b) => b.bucket === bucketKey);
+        } catch (err) {
+          logger.warn('[adminBudgets] failed to read before-snapshot for audit', err);
+        }
+      }
+
       const snapshot = await setUserBudget(
         userId,
         bucketKey,
         { allocatedCredits, spentCredits },
         config,
       );
+
+      if (recordAudit) {
+        const reqUser = (req.user ?? {}) as {
+          _id?: { toString(): string };
+          id?: string;
+          email?: string;
+          role?: string;
+        };
+        const actorId =
+          reqUser._id != null ? reqUser._id.toString() : (reqUser.id as string | undefined);
+        if (actorId) {
+          let targetEmail: string | undefined;
+          if (findUserEmail) {
+            try {
+              targetEmail = await findUserEmail(userId);
+            } catch (err) {
+              logger.warn('[adminBudgets] failed to resolve target email for audit', err);
+            }
+          }
+          const action = pickAuditAction(
+            allocatedCredits !== undefined,
+            spentCredits !== undefined,
+            spentCredits,
+          );
+          await recordAudit({
+            actor: { id: actorId, email: reqUser.email, role: reqUser.role },
+            action,
+            target: { type: 'user', id: userId, email: targetEmail },
+            resource: { type: 'modelBudget', key: bucketKey },
+            before: beforeSnap
+              ? {
+                  allocatedCredits: beforeSnap.allocatedCredits,
+                  spentCredits: beforeSnap.spentCredits,
+                }
+              : null,
+            after: {
+              allocatedCredits: snapshot.allocatedCredits,
+              spentCredits: snapshot.spentCredits,
+            },
+            context: {
+              ip: typeof req.ip === 'string' ? req.ip : undefined,
+              userAgent:
+                typeof req.headers?.['user-agent'] === 'string'
+                  ? (req.headers['user-agent'] as string)
+                  : undefined,
+            },
+          });
+        }
+      }
+
       return res.status(200).json({ userId, bucket: bucketKey, budget: snapshot });
     } catch (err) {
       logger.error('[adminBudgets] setBudget error:', err);

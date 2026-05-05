@@ -1,3 +1,4 @@
+export { createAdminAuditHandlers } from './audit';
 export { createAdminBudgetsHandlers } from './budgets';
 export { createAdminConfigHandlers } from './config';
 export { createAdminGrantsHandlers } from './grants';
@@ -5,6 +6,7 @@ export { createAdminGroupsHandlers } from './groups';
 export { createAdminRolesHandlers } from './roles';
 export { createAdminUsageHandlers } from './usage';
 export { createAdminUsersHandlers } from './users';
+export type { AdminAuditDeps, AdminAuditEntry, AuditAction } from './audit';
 export type { AdminBudgetsDeps } from './budgets';
 export type { AdminConfigDeps } from './config';
 export type { AdminGrantsDeps, GrantPrincipalType } from './grants';

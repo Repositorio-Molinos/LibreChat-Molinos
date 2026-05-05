@@ -150,6 +150,12 @@ export function setAdminUserBudget(
   return request.patch(endpoints.adminSetUserBudget(userId, bucket), payload);
 }
 
+export function getAdminAudit(
+  params: q.AdminAuditParams = {},
+): Promise<q.AdminAuditResponse> {
+  return request.get(endpoints.adminAudit(params));
+}
+
 export const updateTokenCount = (text: string) => {
   return request.post(endpoints.tokenizer(), { arg: text });
 };

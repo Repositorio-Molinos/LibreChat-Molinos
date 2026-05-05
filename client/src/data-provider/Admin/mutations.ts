@@ -25,6 +25,7 @@ export const useSetUserBudgetMutation = (): UseMutationResult<
     onSuccess: (_data, vars) => {
       queryClient.invalidateQueries([QueryKeys.adminUserBudgets, vars.userId]);
       queryClient.invalidateQueries([QueryKeys.adminUsage]);
+      queryClient.invalidateQueries([QueryKeys.adminAudit]);
       queryClient.invalidateQueries([QueryKeys.balance]);
     },
   });

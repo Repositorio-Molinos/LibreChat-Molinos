@@ -16,6 +16,11 @@ const handlers = createAdminBudgetsHandlers({
   getUserBudgets: (userId, config) => db.getUserBudgets(userId, config),
   setUserBudget: (userId, bucketKey, updates, config) =>
     db.setUserBudget(userId, bucketKey, updates, config),
+  findUserEmail: async (userId) => {
+    const user = await db.findUser({ _id: userId }, 'email');
+    return user?.email;
+  },
+  recordAudit: (entry) => db.recordAdminAudit(entry),
 });
 
 router.use(requireJwtAuth, requireAdminAccess, configMiddleware);
