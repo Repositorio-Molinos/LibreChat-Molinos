@@ -233,16 +233,21 @@ export const getResponseSender = (endpointOption: Partial<t.TEndpointOption>): s
     } else if (model && model.includes('gpt-')) {
       const gptVersion = extractGPTVersion(model);
       return gptVersion || 'GPT';
+    } else if (model && model.includes('claude')) {
+      return 'Molinos AI';
+    }
+    if (endpoint === EModelEndpoint.bedrock) {
+      return 'Molinos AI';
     }
     return (alternateName[endpoint] as string | undefined) ?? 'AI';
   }
 
   if (endpoint === EModelEndpoint.anthropic) {
-    return modelLabel || 'Claude';
+    return modelLabel || 'Molinos AI';
   }
 
   if (endpoint === EModelEndpoint.bedrock) {
-    return modelLabel || alternateName[endpoint];
+    return modelLabel || 'Molinos AI';
   }
 
   if (endpoint === EModelEndpoint.google) {

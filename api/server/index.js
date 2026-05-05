@@ -154,10 +154,13 @@ const startServer = async () => {
   /* API Endpoints */
   app.use('/api/auth', preAuthTenantMiddleware, routes.auth);
   app.use('/api/admin', routes.adminAuth);
+  app.use('/api/admin/audit', routes.adminAudit);
+  app.use('/api/admin/budgets', routes.adminBudgets);
   app.use('/api/admin/config', routes.adminConfig);
   app.use('/api/admin/grants', routes.adminGrants);
   app.use('/api/admin/groups', routes.adminGroups);
   app.use('/api/admin/roles', routes.adminRoles);
+  app.use('/api/admin/usage', routes.adminUsage);
   app.use('/api/admin/users', routes.adminUsers);
   app.use('/api/actions', routes.actions);
   app.use('/api/keys', routes.keys);

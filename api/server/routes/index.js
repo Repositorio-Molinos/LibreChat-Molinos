@@ -1,11 +1,14 @@
 const accessPermissions = require('./accessPermissions');
 const assistants = require('./assistants');
 const categories = require('./categories');
+const adminAudit = require('./admin/audit');
 const adminAuth = require('./admin/auth');
+const adminBudgets = require('./admin/budgets');
 const adminConfig = require('./admin/config');
 const adminGrants = require('./admin/grants');
 const adminGroups = require('./admin/groups');
 const adminRoles = require('./admin/roles');
+const adminUsage = require('./admin/usage');
 const adminUsers = require('./admin/users');
 const endpoints = require('./endpoints');
 const staticRoute = require('./static');
@@ -35,11 +38,14 @@ const mcp = require('./mcp');
 module.exports = {
   mcp,
   auth,
+  adminAudit,
   adminAuth,
+  adminBudgets,
   adminConfig,
   adminGrants,
   adminGroups,
   adminRoles,
+  adminUsage,
   adminUsers,
   keys,
   apiKeys,

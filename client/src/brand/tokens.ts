@@ -1,17 +1,15 @@
+import logoIsoSrc from './assets/molinos-iso.svg';
+import logoClaimSrc from './assets/molinos-claim.svg';
+
 /**
  * Molinos brand asset registry.
  *
- * Code-driven by design: when marketing delivers an asset (logo, hero, bg),
- * drop the file under `client/src/brand/assets/`, import it here, and assign
- * the import to the matching field below. No yaml/config change required.
- *
- * Example once an asset arrives:
- *   import logoSidebarSrc from './assets/logo-molinos.svg';
- *   export const brandDefaults = { logoSidebar: logoSidebarSrc, ... };
+ * Code-driven by design: drop a file under `client/src/brand/assets/`,
+ * import it here, and assign to the matching field. No yaml/config change.
  */
 export const brandDefaults = {
-  logoSidebar: undefined as string | undefined,
-  logos: undefined as string[] | undefined,
+  logoSidebar: logoIsoSrc as string,
+  logos: [logoClaimSrc] as string[],
   background: undefined as string | undefined,
   landingImages: undefined as string[] | undefined,
   heroImage: undefined as string | undefined,

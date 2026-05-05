@@ -225,3 +225,141 @@ export type GraphTokenResponse = {
   expires_in: number;
   scope: string;
 };
+
+/* ---------------- Admin (Molinos) ---------------- */
+
+export interface AdminUsersParams {
+  limit?: number;
+  offset?: number;
+}
+
+export interface AdminUserListItem {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+  avatar: string;
+  role: string;
+  provider: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AdminUsersResponse {
+  users: AdminUserListItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export type AdminUsageGroupBy = 'user' | 'model' | 'user-model';
+
+export interface AdminUsageParams {
+  from?: string;
+  to?: string;
+  groupBy?: AdminUsageGroupBy;
+  userId?: string;
+  model?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface AdminUsageRow {
+  groupKey: string;
+  userId?: string;
+  email?: string;
+  name?: string;
+  model?: string;
+  promptTokens: number;
+  completionTokens: number;
+  cacheTokens: number;
+  totalTokens: number;
+  spentMicroUsd: number;
+  spentUsd: number;
+  txCount: number;
+  firstAt?: string;
+  lastAt?: string;
+}
+
+export interface AdminUsageResponse {
+  from: string;
+  to: string;
+  groupBy: AdminUsageGroupBy;
+  rows: AdminUsageRow[];
+  groupCount: number;
+  totals: {
+    spentMicroUsd: number;
+    spentUsd: number;
+    txCount: number;
+    uniqueUsers: number;
+    uniqueModels: number;
+  };
+  limit: number;
+  offset: number;
+}
+
+export interface AdminBudgetSnapshot {
+  bucket: string;
+  label?: string;
+  match?: string[];
+  allocatedCredits: number;
+  spentCredits: number;
+  remainingCredits: number;
+  periodStart: string;
+  periodEnd: string;
+  periodMs: number;
+}
+
+export interface AdminUserBudgetsResponse {
+  userId: string;
+  budgets: AdminBudgetSnapshot[];
+}
+
+export interface AdminSetBudgetRequest {
+  allocatedUsd?: number;
+  allocatedCredits?: number;
+  spentUsd?: number;
+  spentCredits?: number;
+}
+
+export interface AdminSetBudgetResponse {
+  userId: string;
+  bucket: string;
+  budget: AdminBudgetSnapshot;
+}
+
+export type AdminAuditAction =
+  | 'budget.set_allocation'
+  | 'budget.reset_spent'
+  | 'budget.set_both';
+
+export interface AdminAuditParams {
+  from?: string;
+  to?: string;
+  actorId?: string;
+  targetUserId?: string;
+  action?: AdminAuditAction;
+  limit?: number;
+  offset?: number;
+}
+
+export interface AdminAuditRow {
+  id: string;
+  action: AdminAuditAction;
+  actor: { id: string; email?: string; role?: string };
+  target: { type: 'user'; id: string; email?: string };
+  resource: { type: 'modelBudget'; key: string };
+  before?: { allocatedCredits?: number; spentCredits?: number } | null;
+  after?: { allocatedCredits?: number; spentCredits?: number } | null;
+  context?: { ip?: string; userAgent?: string } | null;
+  createdAt?: string;
+}
+
+export interface AdminAuditResponse {
+  from: string;
+  to: string;
+  rows: AdminAuditRow[];
+  total: number;
+  limit: number;
+  offset: number;
+}

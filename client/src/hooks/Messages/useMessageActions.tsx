@@ -127,11 +127,15 @@ export default function useMessageActions(props: TMessageActions) {
     if (message?.isCreatedByUser === true) {
       return UsernameDisplay ? (user?.name ?? '') || user?.username : localize('com_user_message');
     } else if (agent) {
-      return agent.name ?? 'Assistant';
+      return agent.name ?? 'Molinos AI';
     } else if (assistant) {
-      return assistant.name ?? 'Assistant';
+      return assistant.name ?? 'Molinos AI';
     } else {
-      return message?.sender;
+      const sender = message?.sender;
+      if (sender == null || sender === '' || sender === 'Claude' || sender === 'Ollama') {
+        return 'Molinos AI';
+      }
+      return sender;
     }
   }, [message, agent, assistant, UsernameDisplay, user, localize]);
 

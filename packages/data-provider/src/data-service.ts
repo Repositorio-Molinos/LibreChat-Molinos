@@ -117,6 +117,45 @@ export function getUserBalance(): Promise<t.TBalanceResponse> {
   return request.get(endpoints.balance());
 }
 
+export function getAdminUsage(
+  params: q.AdminUsageParams = {},
+): Promise<q.AdminUsageResponse> {
+  return request.get(endpoints.adminUsage(params));
+}
+
+export function getAdminUsersList(
+  params: q.AdminUsersParams = {},
+): Promise<q.AdminUsersResponse> {
+  return request.get(endpoints.adminUsersList(params));
+}
+
+export function searchAdminUsers(
+  query: string,
+  limit?: number,
+): Promise<{ users: q.AdminUserListItem[] }> {
+  return request.get(endpoints.adminUsersSearch(query, limit));
+}
+
+export function getAdminUserBudgets(
+  userId: string,
+): Promise<q.AdminUserBudgetsResponse> {
+  return request.get(endpoints.adminUserBudgets(userId));
+}
+
+export function setAdminUserBudget(
+  userId: string,
+  bucket: string,
+  payload: q.AdminSetBudgetRequest,
+): Promise<q.AdminSetBudgetResponse> {
+  return request.patch(endpoints.adminSetUserBudget(userId, bucket), payload);
+}
+
+export function getAdminAudit(
+  params: q.AdminAuditParams = {},
+): Promise<q.AdminAuditResponse> {
+  return request.get(endpoints.adminAudit(params));
+}
+
 export const updateTokenCount = (text: string) => {
   return request.post(endpoints.tokenizer(), { arg: text });
 };

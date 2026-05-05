@@ -1,7 +1,9 @@
 import { useState, memo, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import * as Menu from '@ariakit/react/menu';
-import { FileText, LogOut } from 'lucide-react';
+import { FileText, LogOut, BarChart3 } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
+import { SystemRoles } from 'librechat-data-provider';
 import { LinkIcon, GearIcon, DropdownMenuSeparator, Avatar } from '@librechat/client';
 import { MyFilesModal } from '~/components/Chat/Input/Files/MyFilesModal';
 import { useGetStartupConfig, useGetUserBalance } from '~/data-provider';
@@ -117,6 +119,15 @@ function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
           >
             <LinkIcon aria-hidden="true" />
             {localize('com_nav_help_faq')}
+          </Menu.MenuItem>
+        )}
+        {user?.role === SystemRoles.ADMIN && (
+          <Menu.MenuItem
+            render={<RouterLink to="/admin/usage" />}
+            className="select-item text-sm"
+          >
+            <BarChart3 className="icon-md" aria-hidden="true" />
+            {localize('com_nav_admin_panel')}
           </Menu.MenuItem>
         )}
         <Menu.MenuItem onClick={() => setShowSettings(true)} className="select-item text-sm">

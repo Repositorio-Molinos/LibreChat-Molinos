@@ -34,7 +34,7 @@ const MinimalIcon: React.FC<IconProps> = (props) => {
     [EModelEndpoint.google]: { icon: <GoogleMinimalIcon />, name: props.modelLabel ?? 'Google' },
     [EModelEndpoint.anthropic]: {
       icon: <AnthropicIcon className="icon-md shrink-0 dark:text-white" />,
-      name: props.modelLabel ?? 'Claude',
+      name: props.modelLabel ?? 'Molinos AI',
     },
     [EModelEndpoint.custom]: {
       icon: <CustomMinimalIcon />,
