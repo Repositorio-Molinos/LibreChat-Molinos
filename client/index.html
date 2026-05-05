@@ -39,12 +39,69 @@
       }
 
       loadingContainerStyle.innerHTML = `
-        #loading-container {
+        #splash-screen {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
           display: flex;
+          flex-direction: column;
+          gap: 28px;
           align-items: center;
           justify-content: center;
-          height: 100vh;
           background-color: ${backgroundColor};
+          opacity: 1;
+          transform: translateY(0);
+          transition:
+            opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
+            transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, transform;
+        }
+
+        #splash-screen.splash-screen--hidden {
+          pointer-events: none;
+          opacity: 0;
+          transform: translateY(-14px);
+        }
+
+        #splash-screen::after {
+          width: 96px;
+          height: 3px;
+          border-radius: 999px;
+          background: linear-gradient(90deg, #224594 0%, #e4262a 100%);
+          content: '';
+          animation: splash-pulse 1200ms ease-in-out infinite;
+        }
+
+        .splash-claim {
+          width: min(42vw, 260px);
+          min-width: 172px;
+          max-height: 188px;
+          object-fit: contain;
+        }
+
+        @keyframes splash-pulse {
+          0%, 100% {
+            opacity: 0.32;
+            transform: scaleX(0.72);
+          }
+          50% {
+            opacity: 1;
+            transform: scaleX(1);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          #splash-screen {
+            transition: opacity 160ms ease;
+          }
+
+          #splash-screen.splash-screen--hidden {
+            transform: none;
+          }
+
+          #splash-screen::after {
+            animation: none;
+          }
         }
       `;
       document.head.appendChild(loadingContainerStyle);
@@ -52,8 +109,9 @@
     <script defer type="module" src="/src/main.jsx"></script>
   </head>
   <body>
-    <div id="root">
-      <div id="loading-container"></div>
+    <div id="root"></div>
+    <div id="splash-screen" role="status" aria-label="Cargando Molinos AI">
+      <img class="splash-claim" src="assets/molinos-claim.svg" alt="Molinos" />
     </div>
   </body>
 </html>
