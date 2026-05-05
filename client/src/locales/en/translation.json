@@ -431,7 +431,7 @@
   "com_admin_audit_filter_action": "Action",
   "com_admin_audit_filter_action_any": "Any",
   "com_admin_audit_search_placeholder": "Filter by actor, target or bucket",
-  "com_admin_audit_col_when": "When",
+  "com_admin_audit_col_when": "Date",
   "com_admin_audit_col_actor": "Actor",
   "com_admin_audit_col_action": "Action",
   "com_admin_audit_col_target": "Target",
