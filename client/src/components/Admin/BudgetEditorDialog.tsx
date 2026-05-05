@@ -78,14 +78,15 @@ export default function BudgetEditorDialog({ user, isOpen, onClose }: Props) {
                   key={b.bucket}
                   budget={b}
                   saving={setBudget.isLoading}
-                  onSave={async (allocatedUsd, resetSpent) => {
+                  onSave={async (allocatedUsd, allocChanged, resetSpent) => {
                     if (!userId) return;
+                    if (!allocChanged && !resetSpent) return;
                     try {
                       await setBudget.mutateAsync({
                         userId,
                         bucket: b.bucket,
                         payload: {
-                          allocatedUsd,
+                          ...(allocChanged ? { allocatedUsd } : {}),
                           ...(resetSpent ? { spentUsd: 0 } : {}),
                         },
                       });
@@ -126,7 +127,7 @@ function BudgetRow({
 }: {
   budget: AdminBudgetSnapshot;
   saving: boolean;
-  onSave: (allocatedUsd: number, resetSpent: boolean) => void;
+  onSave: (allocatedUsd: number, allocChanged: boolean, resetSpent: boolean) => void;
 }) {
   const localize = useLocalize();
   const [allocatedUsd, setAllocatedUsd] = useState(microToUsd(budget.allocatedCredits));
@@ -206,7 +207,7 @@ function BudgetRow({
         <Button
           size="sm"
           disabled={saving || !dirty || !Number.isFinite(allocatedUsd) || allocatedUsd < 0}
-          onClick={() => onSave(allocatedUsd, resetSpent)}
+          onClick={() => onSave(allocatedUsd, allocatedUsd !== allocatedUsdSnap, resetSpent)}
           className={cn(
             'gap-1.5 text-white',
             'hover:opacity-90',

@@ -58,14 +58,17 @@ function parseCreditAmount(value: unknown, unit: 'credits' | 'usd'): number | un
 }
 
 function pickAuditAction(
-  hasAlloc: boolean,
-  hasSpent: boolean,
-  spentValue: number | undefined,
+  before: { allocatedCredits?: number; spentCredits?: number } | undefined,
+  after: { allocatedCredits?: number; spentCredits?: number },
 ): AuditAction {
-  if (hasAlloc && hasSpent) return 'budget.set_both';
-  if (hasAlloc) return 'budget.set_allocation';
-  if (hasSpent && spentValue === 0) return 'budget.reset_spent';
-  return 'budget.set_both';
+  const allocChanged =
+    before?.allocatedCredits !== after.allocatedCredits;
+  const spentReset =
+    after.spentCredits === 0 && (before?.spentCredits ?? 0) > 0;
+  if (allocChanged && spentReset) return 'budget.set_both';
+  if (allocChanged) return 'budget.set_allocation';
+  if (spentReset) return 'budget.reset_spent';
+  return 'budget.set_allocation';
 }
 
 export function createAdminBudgetsHandlers(deps: AdminBudgetsDeps) {
@@ -170,9 +173,16 @@ export function createAdminBudgetsHandlers(deps: AdminBudgetsDeps) {
             }
           }
           const action = pickAuditAction(
-            allocatedCredits !== undefined,
-            spentCredits !== undefined,
-            spentCredits,
+            beforeSnap
+              ? {
+                  allocatedCredits: beforeSnap.allocatedCredits,
+                  spentCredits: beforeSnap.spentCredits,
+                }
+              : undefined,
+            {
+              allocatedCredits: snapshot.allocatedCredits,
+              spentCredits: snapshot.spentCredits,
+            },
           );
           await recordAudit({
             actor: { id: actorId, email: reqUser.email, role: reqUser.role },
