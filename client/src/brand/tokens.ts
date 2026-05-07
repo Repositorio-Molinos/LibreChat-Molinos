@@ -1,7 +1,7 @@
 import logoIsoSrc from './assets/molinos-iso.svg';
 import logoClaimSrc from './assets/molinos-claim.svg';
 
-export const brandAppTitle = 'Molinos AI';
+export const brandAppTitle = 'Molinos IA';
 
 /**
  * Molinos brand asset registry.

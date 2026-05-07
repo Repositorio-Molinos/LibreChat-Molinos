@@ -18,7 +18,7 @@ import { useBrand } from '~/brand';
 import { IconProps } from '~/common';
 import { cn } from '~/utils';
 
-const BRAND_NAME = 'Molinos AI';
+const BRAND_NAME = 'Molinos IA';
 
 function MolinosBrandIcon({ src, size }: { src: string; size: number }) {
   return (

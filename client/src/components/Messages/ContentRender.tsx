@@ -167,7 +167,7 @@ const ContentRender = memo(function ContentRender({
       return time ? `${firstName} · ${time}` : firstName;
     }
     const modelLabel = msg.model ?? conversation?.model ?? messageLabel ?? '';
-    return ['Molinos AI', modelLabel, time].filter(Boolean).join(' · ');
+    return ['Molinos IA', modelLabel, time].filter(Boolean).join(' · ');
   }, [msg, user, conversation?.model, messageLabel, localize]);
 
   if (!msg) {
