@@ -4,5 +4,5 @@ export { default as BrandBackground } from './BrandBackground';
 export { default as BrandHero } from './BrandHero';
 export { default as BrandFloater } from './BrandFloater';
 export { useBrand } from './useBrand';
-export { brandDefaults, type BrandConfig } from './tokens';
+export { brandDefaults, brandAppTitle, type BrandConfig } from './tokens';
 export { formatConvoTime } from './formatConvoTime';
