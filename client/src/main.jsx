@@ -13,8 +13,24 @@ import 'katex/dist/contrib/copy-tex.js';
 const container = document.getElementById('root');
 const root = createRoot(container);
 
+const hideInitialSplash = () => {
+  const splash = document.getElementById('splash-screen');
+  if (!splash) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      splash.classList.add('splash-screen--hidden');
+      window.setTimeout(() => splash.remove(), 520);
+    });
+  });
+};
+
 root.render(
   <ApiErrorBoundaryProvider>
     <App />
   </ApiErrorBoundaryProvider>,
 );
+
+hideInitialSplash();

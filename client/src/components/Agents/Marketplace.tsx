@@ -11,6 +11,7 @@ import { SidePanelGroup } from '~/components/SidePanel';
 import CategoryTabs from './CategoryTabs';
 import SearchBar from './SearchBar';
 import AgentGrid from './AgentGrid';
+import { brandAppTitle } from '~/brand';
 import { cn } from '~/utils';
 
 interface AgentMarketplaceProps {
@@ -47,7 +48,7 @@ const AgentMarketplace: React.FC<AgentMarketplaceProps> = ({ className = '' }) =
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Set page title
-  useDocumentTitle(`${localize('com_agents_marketplace')} | LibreChat`);
+  useDocumentTitle(`${localize('com_agents_marketplace')} | ${brandAppTitle}`);
 
   // Ensure endpoints config is loaded first (required for agent queries)
   useGetEndpointsQuery();
