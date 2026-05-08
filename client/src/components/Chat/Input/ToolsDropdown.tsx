@@ -8,13 +8,14 @@ import {
   Permissions,
   ArtifactModes,
   PermissionTypes,
+  isAgentsEndpoint,
   defaultAgentCapabilities,
 } from 'librechat-data-provider';
 import { useLocalize, useHasAccess, useAgentCapabilities } from '~/hooks';
 import ArtifactsSubMenu from '~/components/Chat/Input/ArtifactsSubMenu';
 import MCPSubMenu from '~/components/Chat/Input/MCPSubMenu';
 import { useGetStartupConfig } from '~/data-provider';
-import { useBadgeRowContext } from '~/Providers';
+import { useBadgeRowContext, useChatContext } from '~/Providers';
 import { cn } from '~/utils';
 
 interface ToolsDropdownProps {
@@ -24,10 +25,17 @@ interface ToolsDropdownProps {
 const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
   const localize = useLocalize();
   const context = useBadgeRowContext();
+  const { conversation } = useChatContext();
   const { data: startupConfig } = useGetStartupConfig();
 
   const { codeEnabled, webSearchEnabled, artifactsEnabled, fileSearchEnabled } =
     useAgentCapabilities(context?.agentsConfig?.capabilities ?? defaultAgentCapabilities);
+
+  /** Artifacts only fire from the agents endpoint (see
+   *  packages/api/src/agents/initialize.ts — generateArtifactsPrompt is gated
+   *  to that endpoint). Hide the toggle in other contexts so it isn't a
+   *  visible no-op for users on a raw modelSpec. */
+  const onAgentsEndpoint = isAgentsEndpoint(conversation?.endpoint);
 
   const canUseWebSearch = useHasAccess({
     permissionType: PermissionTypes.WEB_SEARCH,
@@ -275,7 +283,7 @@ const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
     });
   }
 
-  if (artifactsEnabled && setIsArtifactsPinned != null) {
+  if (artifactsEnabled && onAgentsEndpoint && setIsArtifactsPinned != null) {
     dropdownItems.push({
       hideOnClick: false,
       render: (props) => (
