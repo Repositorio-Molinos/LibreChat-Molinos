@@ -14,15 +14,21 @@ export default function FilesSectionSelector() {
     selectedPage = '/files';
   }
 
-  const darkButton = { backgroundColor: 'black', color: 'white' };
-  const lightButton = { backgroundColor: '#f9f9f9', color: 'black' };
+  const activeButton: React.CSSProperties = {
+    backgroundColor: 'var(--surface-active)',
+    color: 'var(--text-primary)',
+  };
+  const inactiveButton: React.CSSProperties = {
+    backgroundColor: 'transparent',
+    color: 'var(--text-secondary)',
+  };
 
   return (
-    <div className="flex h-12 w-52 flex-row justify-center rounded border bg-white p-1">
+    <div className="flex h-12 w-52 flex-row justify-center rounded border border-border-light bg-surface-secondary p-1">
       <div className="flex w-2/3 items-center pr-1">
         <Button
           className="w-full rounded rounded-lg border"
-          style={selectedPage === '/vector-stores' ? darkButton : lightButton}
+          style={selectedPage === '/vector-stores' ? activeButton : inactiveButton}
           onClick={() => {
             selectedPage = '/vector-stores';
             navigate('/d/vector-stores');
@@ -34,7 +40,7 @@ export default function FilesSectionSelector() {
       <div className="flex w-1/3 items-center">
         <Button
           className="w-full rounded rounded-lg border"
-          style={selectedPage === '/files' ? darkButton : lightButton}
+          style={selectedPage === '/files' ? activeButton : inactiveButton}
           onClick={() => {
             selectedPage = '/files';
             navigate('/d/files');

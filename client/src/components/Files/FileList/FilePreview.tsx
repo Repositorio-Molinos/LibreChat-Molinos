@@ -44,7 +44,7 @@ export default function FilePreview() {
   const params = useParams();
 
   return (
-    <div className="m-3 bg-white p-2 sm:p-4 md:p-6 lg:p-10">
+    <div className="m-3 bg-surface-primary p-2 text-text-primary sm:p-4 md:p-6 lg:p-10">
       <div className="flex flex-col justify-between md:flex-row">
         <div className="flex flex-col">
           <b className="hidden text-sm md:text-base lg:block lg:text-lg">FILE</b>
@@ -84,7 +84,7 @@ export default function FilePreview() {
             &nbsp; Status
           </span>
           <div className="w-1/2 sm:w-3/4 md:w-3/5">
-            <span className="flex w-20 flex-row items-center justify-evenly rounded-full bg-[#f2f8ec] p-1 text-[#91c561]">
+            <span className="flex w-20 flex-row items-center justify-evenly rounded-full bg-green-100 p-1 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <CheckMark className="m-0 p-0" />
               <div>{file.object}</div>
             </span>

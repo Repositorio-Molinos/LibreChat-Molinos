@@ -76,7 +76,7 @@ export const fileTableColumns: ColumnDef<TFile>[] = [
               return (
                 <span
                   key={index}
-                  className="ml-2 mt-2 flex w-fit flex-row items-center rounded-full bg-[#f5f5f5] px-2 text-gray-500"
+                  className="ml-2 mt-2 flex w-fit flex-row items-center rounded-full bg-surface-tertiary px-2 text-text-secondary"
                 >
                   <PlusIcon className="h-3 w-3" />
                   &nbsp;
@@ -88,7 +88,7 @@ export const fileTableColumns: ColumnDef<TFile>[] = [
               return null;
             }
             return (
-              <span key={index} className="ml-2 mt-2 rounded-full bg-[#f2f8ec] px-2 text-[#91c561]">
+              <span key={index} className="ml-2 mt-2 rounded-full bg-green-100 px-2 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                 {vectorStore.name}
               </span>
             );
@@ -113,8 +113,8 @@ export const fileTableColumns: ColumnDef<TFile>[] = [
     cell: ({ row }) => {
       return (
         <>
-          <Button className="w-min content-center bg-transparent text-gray-500 hover:bg-slate-200">
-            <DotsIcon className="text-grey-100 m-0 size-5 p-0" />
+          <Button className="w-min content-center bg-transparent text-text-secondary hover:bg-surface-hover">
+            <DotsIcon className="m-0 size-5 p-0 text-text-secondary" />
           </Button>
         </>
       );
