@@ -65,30 +65,31 @@ body {
   --text-link: var(--molinos-blue);
 }
 
-/* ---- DARK MODE — Molinos blue-night palette per handoff ----
-   Override LibreChat's gray-based dark surfaces with a deep
-   institutional blue stack. */
+/* ---- DARK MODE — Molinos cool-gray canvas ----
+   Canvas / superficies en gris oscuro con sutil tinte cool (alineado
+   con --molinos-neutral-*). El sidebar mantiene su azul institucional
+   vía el scope [data-brand-zone="sidebar"] más abajo. */
 html.dark {
-  /* Brand blue-night canvas */
-  --presentation:                var(--molinos-blue-night);   /* #0D1B5E */
-  --surface-chat:                var(--molinos-blue-night);
-  --surface-primary:             #0a1448;                     /* canvas */
-  --surface-primary-alt:         #081039;                     /* sidebar shade */
-  --surface-primary-contrast:    #0a1448;
-  --surface-secondary:           #0f1d56;
-  --surface-secondary-alt:       #0f1d56;
-  --surface-tertiary:            #142567;
-  --surface-tertiary-alt:        #142567;
-  --surface-dialog:              #0f1d56;
+  /* Gray canvas (cool undertone, brand-aligned) */
+  --presentation:                #0f1119;                     /* neutral-900 — deepest */
+  --surface-chat:                #0f1119;
+  --surface-primary:             #14172a;                     /* canvas */
+  --surface-primary-alt:         #14172a;
+  --surface-primary-contrast:    #14172a;
+  --surface-secondary:           #1a1d2b;                     /* neutral-800 */
+  --surface-secondary-alt:       #1a1d2b;
+  --surface-tertiary:            #2e3242;                     /* neutral-700 */
+  --surface-tertiary-alt:        #2e3242;
+  --surface-dialog:              #1a1d2b;
 
-  /* Hover / active layers — translucent whites over the blue */
+  /* Hover / active layers — translucent whites over the gray */
   --surface-hover:               rgba(255, 255, 255, 0.06);
   --surface-hover-alt:           rgba(255, 255, 255, 0.10);
   --surface-active:              rgba(255, 255, 255, 0.10);
   --surface-active-alt:          rgba(255, 255, 255, 0.14);
 
   /* Header chrome */
-  --header-primary:              #0a1448;
+  --header-primary:              #14172a;
   --header-hover:                rgba(255, 255, 255, 0.06);
   --header-button-hover:         rgba(255, 255, 255, 0.06);
 
@@ -106,17 +107,17 @@ html.dark {
   --surface-submit:              var(--molinos-red);
   --surface-submit-hover:        var(--molinos-red-dark);
 
-  /* Tailwind shadcn vars (HSL triplets) — match the deep blue */
-  --background:                  226 60% 16%;   /* ~#142567 */
+  /* Tailwind shadcn vars (HSL triplets) — match the cool-gray canvas */
+  --background:                  231 33% 13%;   /* ~#14172a */
   --foreground:                  0 0% 98%;
-  --card:                        226 64% 14%;
+  --card:                        228 24% 14%;   /* ~#1a1d2b */
   --card-foreground:             0 0% 98%;
-  --muted:                       226 50% 22%;
+  --muted:                       228 18% 22%;   /* ~#2e3242 */
   --muted-foreground:            0 0% 70%;
-  --accent:                      226 50% 22%;
+  --accent:                      228 18% 22%;
   --accent-foreground:           0 0% 98%;
-  --border:                      226 30% 28%;
-  --input:                       226 30% 28%;
+  --border:                      228 14% 30%;
+  --input:                       228 14% 30%;
 }
 
 /* =============================================================
@@ -144,6 +145,15 @@ html.dark [data-brand-zone="sidebar"] {
   --surface-active-alt: rgba(255, 255, 255, 0.14);
   --surface-hover: rgba(255, 255, 255, 0.06);
   --surface-hover-alt: rgba(255, 255, 255, 0.10);
+  /* Panel surfaces — translúcidas sobre el azul del sidebar para que los
+     componentes (empty states, badges, headers) contrasten con el texto
+     blanco que fuerza este scope. Sin esto los iconos/labels blancos
+     caen sobre `--surface-*` defaults claros = blanco sobre blanco. */
+  --surface-secondary: rgba(255, 255, 255, 0.08);
+  --surface-secondary-alt: rgba(255, 255, 255, 0.10);
+  --surface-tertiary: rgba(255, 255, 255, 0.12);
+  --surface-tertiary-alt: rgba(255, 255, 255, 0.14);
+  --surface-dialog: var(--molinos-blue-darker);
   --text-primary: rgba(255, 255, 255, 0.92);
   --text-secondary: rgba(255, 255, 255, 0.62);
   --text-tertiary: rgba(255, 255, 255, 0.40);
