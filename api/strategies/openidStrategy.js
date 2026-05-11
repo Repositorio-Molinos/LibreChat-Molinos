@@ -1,3 +1,5 @@
+const fs = require('node:fs');
+const { webcrypto } = require('node:crypto');
 const undici = require('undici');
 const { get } = require('lodash');
 const fetch = require('node-fetch');
@@ -781,20 +783,104 @@ const setupOpenIdAdmin = (openidConfig) => {
  * @returns {Promise<Configuration | null>} A promise that resolves when the OpenID strategy is set up and returns the openid client config object.
  * @throws {Error} If an error occurs during the setup process.
  */
+/**
+ * Strip PEM armor and base64-decode to DER bytes.
+ * @param {string} pem
+ * @returns {Buffer}
+ */
+function pemToDer(pem) {
+  const b64 = pem
+    .replace(/-----BEGIN [^-]+-----/, '')
+    .replace(/-----END [^-]+-----/, '')
+    .replace(/\s+/g, '');
+  return Buffer.from(b64, 'base64');
+}
+
+const PRIVATE_KEY_ALG_PARAMS = {
+  RS256: { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+  RS384: { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-384' },
+  RS512: { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-512' },
+  PS256: { name: 'RSA-PSS', hash: 'SHA-256' },
+  ES256: { name: 'ECDSA', namedCurve: 'P-256' },
+  ES384: { name: 'ECDSA', namedCurve: 'P-384' },
+};
+
+/**
+ * Build a private_key_jwt ClientAuth handler from configured env vars, or return null
+ * if cert auth is not configured. Falls back to client_secret in setupOpenId.
+ *
+ * Required env when using cert auth:
+ *   - OPENID_CLIENT_PRIVATE_KEY_PEM  (PEM string) OR OPENID_CLIENT_PRIVATE_KEY_PATH (file path)
+ *   - OPENID_CLIENT_X5T              (base64url SHA-1 thumbprint of the cert — Entra requires it)
+ * Optional:
+ *   - OPENID_CLIENT_PRIVATE_KEY_ALG  (default RS256; supports RS256/384/512, PS256, ES256/384)
+ *
+ * @returns {Promise<import('openid-client').ClientAuth|null>}
+ */
+async function buildPrivateKeyAuth() {
+  const pemEnv = process.env.OPENID_CLIENT_PRIVATE_KEY_PEM;
+  const pemPath = process.env.OPENID_CLIENT_PRIVATE_KEY_PATH;
+  if (!pemEnv && !pemPath) {
+    return null;
+  }
+
+  const x5t = process.env.OPENID_CLIENT_X5T;
+  if (!x5t) {
+    throw new Error(
+      '[openidStrategy] OPENID_CLIENT_X5T is required when configuring private_key_jwt auth ' +
+        '(Entra ID requires the cert thumbprint in the JWT x5t header). ' +
+        'Set it to the base64url-encoded SHA-1 thumbprint of the certificate.',
+    );
+  }
+
+  const alg = (process.env.OPENID_CLIENT_PRIVATE_KEY_ALG || 'RS256').toUpperCase();
+  const algParams = PRIVATE_KEY_ALG_PARAMS[alg];
+  if (!algParams) {
+    throw new Error(
+      `[openidStrategy] Unsupported OPENID_CLIENT_PRIVATE_KEY_ALG=${alg}. ` +
+        `Supported: ${Object.keys(PRIVATE_KEY_ALG_PARAMS).join(', ')}`,
+    );
+  }
+
+  const pem = pemEnv || fs.readFileSync(pemPath, 'utf-8');
+  const cryptoKey = await webcrypto.subtle.importKey(
+    'pkcs8',
+    pemToDer(pem),
+    algParams,
+    false,
+    ['sign'],
+  );
+
+  return client.PrivateKeyJwt(
+    { key: cryptoKey, kid: x5t },
+    {
+      [client.modifyAssertion]: (header) => {
+        header.x5t = x5t;
+      },
+    },
+  );
+}
+
 async function setupOpenId() {
   try {
     const shouldGenerateNonce = isEnabled(process.env.OPENID_GENERATE_NONCE);
+    const privateKeyAuth = await buildPrivateKeyAuth();
+    const usePrivateKeyJwt = privateKeyAuth !== null;
 
     /** @type {ClientMetadata} */
     const clientMetadata = {
       client_id: process.env.OPENID_CLIENT_ID,
-      client_secret: process.env.OPENID_CLIENT_SECRET,
     };
+    if (!usePrivateKeyJwt) {
+      clientMetadata.client_secret = process.env.OPENID_CLIENT_SECRET;
+    }
 
     if (shouldGenerateNonce) {
       clientMetadata.response_types = ['code'];
       clientMetadata.grant_types = ['authorization_code'];
-      clientMetadata.token_endpoint_auth_method = 'client_secret_post';
+      clientMetadata.token_endpoint_auth_method = usePrivateKeyJwt
+        ? 'private_key_jwt'
+        : 'client_secret_post';
     }
 
     /** @type {Configuration} */
@@ -802,7 +888,7 @@ async function setupOpenId() {
       new URL(process.env.OPENID_ISSUER),
       process.env.OPENID_CLIENT_ID,
       clientMetadata,
-      undefined,
+      privateKeyAuth || undefined,
       {
         [client.customFetch]: customFetch,
       },
@@ -810,6 +896,7 @@ async function setupOpenId() {
 
     logger.info(`[openidStrategy] OpenID authentication configuration`, {
       generateNonce: shouldGenerateNonce,
+      authMethod: usePrivateKeyJwt ? 'private_key_jwt (cert)' : 'client_secret',
       reason: shouldGenerateNonce
         ? 'OPENID_GENERATE_NONCE=true - Will generate nonce and use explicit metadata for federated providers'
         : 'OPENID_GENERATE_NONCE=false - Standard flow without explicit nonce or metadata',
