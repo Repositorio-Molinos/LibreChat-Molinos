@@ -69,7 +69,8 @@ export default defineConfig(({ command }) => ({
       injectRegister: 'auto', // 'auto' | 'manual' | 'disabled'
       registerType: 'autoUpdate', // 'prompt' | 'autoUpdate'
       devOptions: {
-        enabled: false, // disable service worker registration in development mode
+        enabled: true,
+        type: 'module',
       },
       useCredentials: true,
       includeManifestIcons: false,
