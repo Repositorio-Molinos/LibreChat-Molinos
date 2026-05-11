@@ -40,6 +40,7 @@ client/src/localization/languages/*_missing_keys.json
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 build/
 dist/
+dev-dist/
 public/main.js
 public/main.js.map
 public/main.js.LICENSE.txt
