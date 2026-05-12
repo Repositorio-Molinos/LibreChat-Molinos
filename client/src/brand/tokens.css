@@ -63,6 +63,14 @@ body {
 
   /* Text / link tone leans into brand blue */
   --text-link: var(--molinos-blue);
+
+  /* ---- Shadcn "primary" override (light) -------------------- */
+  /* Default shadcn primary is casi-negro (0 0% 9%) — los componentes
+     radix (Switch, Checkbox, botones primary) lo usan como fondo en
+     estado checked/on. Pisamos a rojo Molinos para que la identidad
+     de marca se vea en todos esos controles. */
+  --primary: 358 84% 52%;            /* ~#EC1C24 — molinos-red */
+  --primary-foreground: 0 0% 100%;   /* contraste sobre el rojo */
 }
 
 /* ---- DARK MODE — Molinos cool-gray canvas ----
@@ -118,6 +126,11 @@ html.dark {
   --accent-foreground:           0 0% 98%;
   --border:                      228 14% 30%;
   --input:                       228 14% 30%;
+
+  /* Shadcn primary — mismo rojo Molinos también en dark para mantener
+     identidad de marca en Switch/Checkbox/botones primary. */
+  --primary: 358 84% 52%;            /* ~#EC1C24 — molinos-red */
+  --primary-foreground: 0 0% 100%;
 }
 
 /* =============================================================
@@ -207,6 +220,23 @@ html.dark [data-brand-zone="sidebar"] {
 }
 [data-brand-zone="sidebar"] ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.30);
+}
+
+/* Buttons inside the sidebar zone (.btn-neutral / .btn-secondary):
+   LibreChat hardcodea el `color` en gris oscuro y depende de `--surface-*`
+   para el fondo. Adentro del sidebar zone, el bg es azul institucional, así
+   que el texto oscuro queda ilegible. Forzamos el patrón translucent-white
+   que usan el resto de los controles del sidebar. */
+[data-brand-zone="sidebar"] .btn-neutral,
+[data-brand-zone="sidebar"] .btn-secondary {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+[data-brand-zone="sidebar"] .btn-neutral:hover,
+[data-brand-zone="sidebar"] .btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
 }
 
 /* Sidebar: hide per-conversation endpoint icons (mockup uses no icons in chat list) */
@@ -541,6 +571,11 @@ html.dark [data-brand-zone="sidebar"] {
 [data-brand-zone="chat"] button[type="submit"] > svg,
 [data-brand-zone="chat"] button[data-brand-cta="true"] > svg {
   color: #fff !important;
+}
+/* StopButton inverts colors during streaming (bg = --text-primary, fg = --surface-primary).
+   Preservar el fg invertido para que el icono contraste con el fondo dark/light. */
+[data-brand-zone="chat"] button.bg-text-primary > svg {
+  color: var(--surface-primary) !important;
 }
 /* Avatar svgs are intentionally hidden by other rules — don't fight them */
 [data-brand-zone="chat"] .message-render > div:first-child > div > svg {
