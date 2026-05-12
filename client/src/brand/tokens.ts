@@ -1,17 +1,16 @@
-import logoIsoSrc from './assets/molinos-iso.svg';
-import logoClaimSrc from './assets/molinos-claim.svg';
-
 export const brandAppTitle = 'Molinos IA';
 
 /**
  * Molinos brand asset registry.
  *
- * Code-driven by design: drop a file under `client/src/brand/assets/`,
- * import it here, and assign to the matching field. No yaml/config change.
+ * Assets viven en `client/public/assets/` (servidos directo por Vite),
+ * de modo que el favicon y los componentes de marca refieran al MISMO
+ * archivo y no se desincronicen. Para sumar un asset nuevo, dropealo en
+ * `public/assets/` y agregá la ruta absoluta acá.
  */
 export const brandDefaults = {
-  logoSidebar: logoIsoSrc as string,
-  logos: [logoClaimSrc] as string[],
+  logoSidebar: '/assets/molinos-iso.svg' as string,
+  logos: ['/assets/molinos-claim.svg'] as string[],
   background: undefined as string | undefined,
   landingImages: undefined as string[] | undefined,
   heroImage: undefined as string | undefined,
