@@ -4,6 +4,7 @@ import type { TStartupConfig } from 'librechat-data-provider';
 import { TranslationKeys, useLocalize } from '~/hooks';
 import { useGetStartupConfig } from '~/data-provider';
 import AuthLayout from '~/components/Auth/AuthLayout';
+import MolinosLoginPage from '~/components/Auth/MolinosLoginPage';
 import { brandAppTitle } from '~/brand';
 import { REDIRECT_PARAM, SESSION_KEY } from '~/utils';
 
@@ -62,6 +63,19 @@ export default function StartupLayout({ isAuthenticated }: { isAuthenticated?: b
     startupConfig,
     isFetching,
   };
+
+  // En /login, si el único método de auth es OpenID (Entra), usamos la pantalla
+  // Molinos full-viewport en vez del AuthLayout (card pequeña). Las otras rutas
+  // (/register, /forgot-password, /2fa) siguen pasando por AuthLayout porque
+  // no aplican al flujo OpenID o requieren el form de email.
+  const onlyOpenIDLogin =
+    startupConfig?.openidLoginEnabled === true &&
+    startupConfig?.emailLoginEnabled !== true &&
+    startupConfig?.registrationEnabled !== true;
+
+  if (location.pathname === '/login' && onlyOpenIDLogin) {
+    return <MolinosLoginPage startupConfig={startupConfig} />;
+  }
 
   return (
     <AuthLayout
