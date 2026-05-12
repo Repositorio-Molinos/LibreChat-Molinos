@@ -1,0 +1,71 @@
+name: Build MS365 MCP image
+
+# Builds and pushes the ms365-mcp container image to GHCR.
+#
+# Trigger:
+# - Automatically when docker/ms365-mcp/** changes on main (rare — solo cuando
+#   bumpeás MS365_MCP_VERSION en el Dockerfile o tocás algo del wrapper).
+# - Manual desde la pestaña Actions, con opción de override de la versión.
+#
+# El tag de la imagen NO es el git SHA — es la versión de Softeria que pinea
+# el Dockerfile (ARG MS365_MCP_VERSION). El manifiesto en
+# molinos-k8s-calidad/apps/librechat/ms365-mcp-deployment.yaml hay que
+# bumpearlo a mano cuando querés deployar la versión nueva (es intencional:
+# permite testear local antes de rolear a prod).
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/ms365-mcp/**'
+      - '.github/workflows/build-ms365-mcp.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Tag override (default: lee ARG MS365_MCP_VERSION del Dockerfile)'
+        required: false
+        type: string
+
+env:
+  IMAGE: ghcr.io/repositorio-molinos/ms365-mcp
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determinar versión
+        id: version
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+            echo "Usando override manual: $VERSION"
+          else
+            VERSION=$(grep -oP 'MS365_MCP_VERSION=\K[0-9.]+' docker/ms365-mcp/Dockerfile)
+            if [ -z "$VERSION" ]; then
+              echo "ERROR: No pude leer MS365_MCP_VERSION del Dockerfile"
+              exit 1
+            fi
+            echo "Versión leída del Dockerfile: $VERSION"
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Login a ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build y push
+        uses: docker/build-push-action@v5
+        with:
+          context: docker/ms365-mcp
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.version.outputs.VERSION }}
+            ${{ env.IMAGE }}:latest
