@@ -234,20 +234,20 @@ export const getResponseSender = (endpointOption: Partial<t.TEndpointOption>): s
       const gptVersion = extractGPTVersion(model);
       return gptVersion || 'GPT';
     } else if (model && model.includes('claude')) {
-      return 'Molinos AI';
+      return 'Molinos IA';
     }
     if (endpoint === EModelEndpoint.bedrock) {
-      return 'Molinos AI';
+      return 'Molinos IA';
     }
     return (alternateName[endpoint] as string | undefined) ?? 'AI';
   }
 
   if (endpoint === EModelEndpoint.anthropic) {
-    return modelLabel || 'Molinos AI';
+    return modelLabel || 'Molinos IA';
   }
 
   if (endpoint === EModelEndpoint.bedrock) {
-    return modelLabel || 'Molinos AI';
+    return modelLabel || 'Molinos IA';
   }
 
   if (endpoint === EModelEndpoint.google) {

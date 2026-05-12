@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 42.75 42">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#Unnamed_Pattern_14);
+        fill-rule: evenodd;
+      }
+
+      .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-2" width="16" height="16"/>
+    </clipPath>
+    <pattern id="Unnamed_Pattern_14" data-name="Unnamed Pattern 14" x="0" y="0" width="16" height="16" patternTransform="translate(10.17 -105.44) scale(.38 -.38)" patternUnits="userSpaceOnUse" viewBox="0 0 16 16">
+      <g>
+        <rect class="cls-2" width="16" height="16"/>
+        <g class="cls-3">
+          <image width="16" height="16" transform="translate(0 16) scale(1 -1)" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAAO0lEQVQ4jWM8c+bMfwYGBgZjY2MGcgATWbqQAOP/////U2IAxS4YNYAIA86ePctw9uxZ2rlgNB0MBgMAoN0Q4HiDBbsAAAAASUVORK5CYII="/>
+        </g>
+      </g>
+    </pattern>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <path class="cls-1" d="M21.37,0c11.81,0,21.38,9.4,21.38,21v21h-21.38C9.57,42,0,32.6,0,21S9.57,0,21.37,0Z"/>
+  </g>
+</svg>
