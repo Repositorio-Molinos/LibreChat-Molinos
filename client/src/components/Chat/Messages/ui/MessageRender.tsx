@@ -166,9 +166,8 @@ const MessageRender = memo(function MessageRender({
       const firstName = fullName.split(/\s+/)[0] || localize('com_nav_user');
       return time ? `${firstName} · ${time}` : firstName;
     }
-    const modelLabel = msg.model ?? conversation?.model ?? messageLabel ?? '';
-    return ['Molinos IA', modelLabel, time].filter(Boolean).join(' · ');
-  }, [msg, user, conversation?.model, messageLabel, localize]);
+    return ['Molinos IA', time].filter(Boolean).join(' · ');
+  }, [msg, user, localize]);
   const messageId = msg?.messageId ?? '';
   const messageContextValue = useMemo(
     () => ({
