@@ -17,7 +17,7 @@ env:
 jobs:
   build:
     name: Build packages
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -100,7 +100,7 @@ jobs:
   typecheck:
     name: TypeScript type checks
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -159,7 +159,7 @@ jobs:
   circular-deps:
     name: Circular dependency checks
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -219,7 +219,7 @@ jobs:
   test-api:
     name: 'Tests: api'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 15
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -286,7 +286,7 @@ jobs:
   test-data-provider:
     name: 'Tests: data-provider'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -324,7 +324,7 @@ jobs:
   test-data-schemas:
     name: 'Tests: data-schemas'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -368,7 +368,7 @@ jobs:
   test-packages-api:
     name: 'Tests: @librechat/api'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
