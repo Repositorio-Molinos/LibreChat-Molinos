@@ -57,7 +57,7 @@ jobs:
     if: |
       github.event_name != 'pull_request' ||
       github.event.pull_request.user.login == 'danny-avila'
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 25
     steps:
       - name: Checkout repository
