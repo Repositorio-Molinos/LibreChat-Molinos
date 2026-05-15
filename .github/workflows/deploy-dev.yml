@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     if: |
       github.repository == 'danny-avila/LibreChat' &&
       (github.event_name == 'workflow_dispatch' || 
