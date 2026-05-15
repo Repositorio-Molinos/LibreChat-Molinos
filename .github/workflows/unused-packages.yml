@@ -12,7 +12,7 @@ on:
 
 jobs:
   detect-unused-packages:
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     permissions:
       pull-requests: write
 
