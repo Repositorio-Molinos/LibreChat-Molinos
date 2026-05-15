@@ -13,7 +13,7 @@ env:
 
 jobs:
   deploy-gh-runner-aci:
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     steps:
       # checkout the repo
       - name: 'Checkout GitHub Action'
