@@ -17,7 +17,7 @@ env:
 jobs:
   build:
     name: Build packages
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -81,7 +81,7 @@ jobs:
   test-ubuntu:
     name: 'Tests: Ubuntu'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -169,7 +169,7 @@ jobs:
   build-verify:
     name: Vite build verification
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
