@@ -16,7 +16,7 @@ on:
 
 jobs:
   detect-unused-i18n-keys:
-    runs-on: ubuntu-latest
+    runs-on: arc-molinos-org
     permissions:
       pull-requests: write
     steps:
